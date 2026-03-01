@@ -14,7 +14,7 @@ import ApplicationContext from "@/components/utils/ApplicationContext.astro";
 import PageLoader from "@/components/utils/PageLoader.astro";
 import { ModeToggle } from "@/components/utils/ModeToggle";
 import { ScrollToTopButton } from "@/components/utils/TopButton";
-
+import Footer from "@/components/Footer.astro";
 interface Props extends MetadataProps {
 	pageLoader?: boolean;
 	applicationContext?: ApplicationContextProps;
@@ -64,11 +64,25 @@ const { pageLoader = true, applicationContext }: Props = Astro.props;
 			});
 		</script>
 	</head>
-	<body>
+	<body
+		class="flex min-h-screen w-full flex-col justify-end gap-8 align-middle"
+	>
 		<ScrollToTopButton client:load className="fixed right-4 bottom-4 z-50" />
-		<main>
+		<div class="fixed top-0 left-0 -z-10 h-[65vh] w-full object-cover">
+			<div
+				class="absolute inset-0 z-10 bg-linear-to-b from-transparent to-background"
+			>
+			</div>
+			<img
+				src="/doodle.webp"
+				alt="doodle"
+				class="h-full w-full object-cover object-bottom opacity-25"
+			/>
+		</div>
+		<main class="">
 			<slot />
 		</main>
+		<Footer className="pt-0 pb-10 sm:pb-14" />
 		<ModeToggle
 			client:load
 			className="fixed bottom-2 left-2 z-50"
