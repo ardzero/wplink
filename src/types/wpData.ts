@@ -1,8 +1,8 @@
 export type wpData = {
     phone: string;
+    wpLink: string;
     name?: string;
-    wpLink?: string;
-    country?: string;
+    countryDialCode?: string;
 };
 
 export type countryCode = {
