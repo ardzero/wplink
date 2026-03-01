@@ -5,3 +5,9 @@ export type wpData = {
     country?: string;
 };
 
+export type countryCode = {
+    code: string;
+    country: string;
+    dialCode: string;
+};
+

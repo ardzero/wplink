@@ -1,4 +1,4 @@
-[![wplink](https://wplink.ardastroid.com/ogImage.webp)](https://github.com/ardzero/wplink))
+[![wplink](https://wplink.ardastroid.com/ogImage.webp)](https://github.com/ardzero/wplink)
 
 # wplink
 

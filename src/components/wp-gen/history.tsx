@@ -8,6 +8,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "./copy-btn";
 import { Img } from "@/components/utils/react-only/Image";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 
 type THistory = {
 	className?: string;
@@ -23,6 +25,9 @@ export function History({ className, children }: THistory) {
 			<DrawerContent className={cn("", className)}>
 				<div className="container mx-auto min-h-[500px] py-14">
 					<h1>History</h1>
+					<ScrollArea className="h-[500px] w-full">
+						<div className="flex flex-col gap-2"></div>
+					</ScrollArea>
 				</div>
 			</DrawerContent>
 		</Drawer>
