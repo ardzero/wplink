@@ -1,7 +1,9 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Download, Cog, History } from "lucide-react";
+import { Download, Cog, History as HistoryIcon } from "lucide-react";
 import { ShareLink } from "./share-link";
+import { History } from "./history";
+import { Settings } from "./settings";
 type TWPGen = {
 	className?: string;
 };
@@ -18,20 +20,25 @@ export function WPGen({ className }: TWPGen) {
 					wplink
 				</a>
 				<div className="flex flex-wrap gap-1">
-					<Button
-						className={cn(baseClassName, "size-[40px] min-h-auto")}
-						title="History"
-					>
-						<History className="size-4.5 opacity-65 transition-opacity duration-200 group-hover:opacity-100" />
-						<span className="sr-only">History</span>
-					</Button>
-					<Button
-						className={cn(baseClassName, "size-[40px] min-h-auto")}
-						title="Settings"
-					>
-						<Cog className="size-4.5 opacity-65 transition-opacity duration-200 group-hover:opacity-100" />
-						<span className="sr-only">Settings</span>
-					</Button>
+					<History>
+						<Button
+							className={cn(baseClassName, "size-[40px] min-h-auto")}
+							title="History"
+						>
+							<HistoryIcon className="size-4.5 opacity-65 transition-opacity duration-200 group-hover:opacity-100" />
+
+							<span className="sr-only">History</span>
+						</Button>
+					</History>
+					<Settings>
+						<Button
+							className={cn(baseClassName, "size-[40px] min-h-auto")}
+							title="Settings"
+						>
+							<Cog className="size-4.5 opacity-65 transition-opacity duration-200 group-hover:opacity-100" />
+							<span className="sr-only">Settings</span>
+						</Button>
+					</Settings>
 				</div>
 			</nav>
 			<div className="flex flex-wrap gap-3">
