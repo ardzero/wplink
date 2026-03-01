@@ -4,29 +4,37 @@ import type { TSiteData, TtwitterMetaData, TMetadataIcons } from "@/types";
 // in webmanifest, theme_color is the color of the app icon's background and
 export const siteData: TSiteData = {
 	favicon: "/favicon.svg", // .svg / .ico / .png
-	name: "Bunestro - Astro v5 Bun Starter",
-	shortName: "Bunestro",
-	publisher: "bunestro.ardastroid.com",
-	baseUrl: import.meta.env.SITE, // make sure to change the link in astro.config.mjs
+	name: "wplink - Whatsapp Link Generator",
+	shortName: "wplink",
+	publisher: "wplink.ardastroid.com",
+	baseUrl: import.meta.env.SITE, // make sure to change the link in astro.config.mjs 
 	description:
-		"Bunestro is a astro v5 starter template with tailwindcss, shadcn and some other cool feature that runs on bun or node",
-	ogImage: { src: "/ogImage.webp", alt: "Bunestro", width: 1200, height: 630 },
+		"Whatsapp Link Generator is a tool that auto generates whatsapp link and direct contact save link from a phone number",
+	ogImage: { src: "/ogImage.webp", alt: "Whatsapp Link Generator", width: 1200, height: 630 },
 	metadata_color: {
-		light: "#3A86FF",
-		dark: "#3A86FF",
+		light: "#1DAA61",
+		dark: "#1DAA61",
 	},
 	author: {
 		name: "Ard Astroid",
 		url: "https://github.com/ardzero/",
 	},
 	keywords: [
-		"Astro.build",
-		"React",
-		"Tailwind CSS",
-		"Bun",
-		"Shadcn UI",
-		"TypeScript",
-		"Zod",
+		"whatsapp",
+		"whatsapp link",
+		"link generator",
+		"contact link",
+		"wa.me",
+		"direct message",
+		"messaging tool",
+		"auto generate links",
+		"chat link maker",
+		"whatsapp api",
+		"save to contacts",
+		"phone number link",
+		"click to chat",
+		"whatsapp automation",
+		"create whatsapp link"
 	],
 
 	robotsDefault: { index: true, follow: false }, // { index: false, follow: false }

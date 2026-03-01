@@ -8,7 +8,7 @@ import sitemap from "@astrojs/sitemap";
 // https://astro.build/config
 export default defineConfig({
 	// must include https:// in the url
-	site: "https://bunestro.ardastroid.com",
+	site: "https://wplink.ardastroid.com",
 	integrations: [react(), sitemap()],
 
 	vite: {

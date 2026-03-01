@@ -1,6 +1,6 @@
 {
-	"name": "Bunestro",
-	"short_name": "Bunestro",
+	"name": "Whatsapp Link Generator",
+	"short_name": "wplink",
 	"icons": [
 		{
 			"src": "/android-chrome-192x192.png",
@@ -13,7 +13,7 @@
 			"type": "image/png"
 		}
 	],
-	"theme_color": "#fbf0df",
-	"background_color": "#2d2b2a",
+	"theme_color": "#1DAA61",
+	"background_color": "#0A0A0A",
 	"display": "standalone"
 }
