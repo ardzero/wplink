@@ -1,57 +1,16 @@
-[![Bunestro](https://bunestro.ardastroid.com/ogImage.webp)](https://bunestro.ardastroid.com/)
+[![wplink](https://wplink.ardastroid.com/ogImage.webp)](https://github.com/ardzero/wplink))
 
-# Bunestro
+# wplink
 
-An opinionated Astro starter template setup with Tailwind CSS, React, Shadcn, and Tailwind-motion, along with built-in utilities. [Live deployment](https://bunestro.ardastroid.com/)
-Repo: [Github Repo](https://github.com/ardzero/bunestro)
+An whatsapp link and contact link generator built on top of the [bunestro](https://bunestro.ardastroid.com/) starter kit.
 
-## Getting Started
+### Project Repo: [wplink](https://github.com/ardzero/wplink)
 
-Create a new project using:
-
-```bash
-bun create bunestro@latest my-app
-```
-
-Or with npm:
-
-```bash
-npm reate bunestro@latest my-app
-```
-
-### Quick Setup Options
-
-```bash
-# Interactive mode (recommended for first time)
-bun create bunestro@latest my-app
-
-# Skip all prompts, use defaults
-bun create bunestro@latest my-app -y
-
-# Open in editor after creation
-bun create bunestro@latest my-app --cursor
-bun create bunestro@latest my-app --vscode
-
-# Skip dependency installation
-bun create bunestro@latest my-app --no-install
-
-# Combine options
-bun create bunestro@latest my-app -y --cursor
-```
-
-Run with `--help` flag to see all available options:
-
-```bash
-bun create bunestro@latest --help
-```
-
-## Usage (run locally)
+## Running locally
 
 > Requires `bun` or `nodejs` installed and up to date
 
 Go to the `root` folder where `package.json` exists.
-
-> Skip this if you used `bun create bunestro` with dependency installation (default)
 
 ```bash
 # Using bun
@@ -71,8 +30,6 @@ bun run dev
 npm run dev
 ```
 
-> bun is not officially supported by astro, so if you ran into any problems, try using `npm` to see if it works before creating an github issue.
-
 #### Command list
 
 | Command                   | Action                                           |
@@ -85,35 +42,21 @@ npm run dev
 
 > just replace `bun` with `npm` if you're using npm
 
-## Features
+## Tech Stack
 
-- Astro 5.2
-- Tailwind CSS v4
-- React Integration
+- [Astro 5.2](https://astro.build/)
+- [React 19](https://react.dev/)
+- [Tailwind CSS v4](https://tailwindcss.com/)
+- [Radix UI Primitives](https://www.radix-ui.com/primitives)
 - [Shadcn](https://ui.shadcn.com/) components
-- Custom utility components
-- Theme support (dark and light mode)
 - Tailwind CSS animations using [tailwindcss-motion](https://docs.rombo.co/tailwind)
-- SEO optimized (SEO component provided)
-- Responsive optimized img loader component
-- Share modal
-- Utilities like `qrCode gen, string shortner, uniqueCode gen, img placeholder, email validation, hashing etc`
+- [Prettier](https://prettier.io/) for formating with [tailwind plugin](https://github.com/tailwindlabs/prettier-plugin-tailwindcss) configure
 
 ## Config
 
-- Configure colors in `src/styles/globals.css`
-- Site default metadata in `astro.config.mjs`
-- Component configurations in `src/lib/data/siteData.ts`
-- Astro configurations in `astro.config.mjs`
-
-## Roadmap
-
-- [x] Add theme support
-- [x] Add basic Shadcn components
-- [x] Add static img optimization component
-- [ ] Add sample responsive components
-- [ ] Add more documentation
-- [ ] Add state management examples
+- Data `src/lib/data/*`
+- Metadata config `src/lib/data/siteData.ts`
+- Types `src/types/*`
 
 ## Socials
 
