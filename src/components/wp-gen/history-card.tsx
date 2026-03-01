@@ -1,12 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { wpData } from "@/types/wpData";
 
-import {
-	Avatar,
-	AvatarBadge,
-	AvatarFallback,
-	AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getCountryByDialCode } from "@/lib/data/countryCodes";
 import { EyeIcon } from "lucide-react";
 

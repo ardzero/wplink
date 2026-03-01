@@ -17,8 +17,6 @@ type THistory = {
 	children: React.ReactNode;
 };
 
-const pBaseClassName =
-	"grow rounded-md border-none bg-card px-4 flex flex-col shrink justify-center h-[44px] w-full truncate sm:text-base! text-sm!";
 export function History({ className, children }: THistory) {
 	return (
 		<Drawer>

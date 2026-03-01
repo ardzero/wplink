@@ -1,14 +1,6 @@
-import { cn, getQrCode } from "@/lib/utils";
-import {
-	Drawer,
-	DrawerClose,
-	DrawerContent,
-	DrawerTrigger,
-} from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
-import { CopyButton } from "./copy-btn";
-import { Img } from "@/components/utils/react-only/Image";
-import { Cog, HistoryIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import { Cog } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 type TSettings = {
@@ -16,8 +8,6 @@ type TSettings = {
 	children: React.ReactNode;
 };
 
-const pBaseClassName =
-	"grow rounded-md border-none bg-card px-4 flex flex-col shrink justify-center h-[44px] w-full truncate sm:text-base! text-sm!";
 export function Settings({ className, children }: TSettings) {
 	return (
 		<Drawer>
