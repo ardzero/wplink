@@ -1,11 +1,8 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import Home from "@/components/Home.astro";
 import { WPGen } from "@/components/wp-gen/wp-gen";
 ---
 
 <Layout>
-	<div class="mx-auto h-[40vh] w-xl bg-card">
-		<WPGen client:load />
-	</div>
+	<WPGen client:load />
 </Layout>

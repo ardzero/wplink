@@ -7,7 +7,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* responsive font sizes | comment this out if you wanna use defaults */
-:root {
+/* :root {
 	font-size: 15px;
 }
 @media (min-width: 1600px) {
@@ -19,7 +19,7 @@
 	:root {
 		font-size: 18px;
 	}
-}
+} */
 @theme inline {
 	/* fonts, font sans is the defualt body font (you can change that at the bottom of this file)*/
 	/* --font-sans: "Satoshi", sans-serif; */
@@ -65,10 +65,11 @@
 @utility container {
 	margin-inline: auto;
 	padding-inline: 1rem;
-	max-width: 600px;
+	max-width: 632px;
 
-	@media (width >= 1024px) {
+	@media (width >= 700px) {
 		/* max-width: 1024px; */
+		max-width: 664px;
 		padding-inline: 2rem;
 	}
 }
