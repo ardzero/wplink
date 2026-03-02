@@ -40,7 +40,7 @@ export function HistoryCard({
 							e.stopPropagation();
 							onDelete();
 						}}
-						className="rounded p-1.5 text-muted-foreground transition-colors hover:bg-destructive/15 hover:text-destructive"
+						className="rounded p-1.5 text-muted-foreground opacity-35 transition-colors hover:bg-destructive/15 hover:text-destructive hover:opacity-100"
 						aria-label="Delete from history"
 					>
 						<Trash2 className="size-4.5" />
