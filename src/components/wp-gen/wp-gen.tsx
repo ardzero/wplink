@@ -63,7 +63,7 @@ export function WPGen({ className }: TWPGen) {
 		>
 			<WPNav />
 			<form onSubmit={handleSubmit} className="flex flex-wrap gap-2">
-				<div className="flex w-full justify-end gap-2 align-bottom">
+				<div className="flex w-full flex-wrap justify-end gap-2 align-bottom min-[525px]:flex-nowrap">
 					<div className="w-full grow basis-1/2">
 						<label htmlFor="name">
 							Name <span className="text-muted-foreground/65">(optional)</span>
@@ -80,7 +80,7 @@ export function WPGen({ className }: TWPGen) {
 							placeholder="John Doe"
 							className={cn(
 								"no-autofill-bg w-full rounded-md border-none bg-card py-3.5 pr-12 pl-4 text-base ring-muted outline-none focus-visible:ring-1",
-								completed && "pointer-events-none text-muted-foreground/65",
+								completed && "pointer-events-none text-muted-foreground/65!",
 							)}
 						/>
 					</div>

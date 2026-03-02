@@ -133,7 +133,9 @@ export function useUrlParam<T = string>(
 			if (serialized) url.searchParams.set(paramKey, serialized);
 			else url.searchParams.delete(paramKey);
 			window.history.replaceState(null, "", url.toString());
-			window.dispatchEvent(new PopStateEvent("popstate"));
+			// Chrome doesn't always update location.search before the same tick ends;
+			// defer so getSnapshot() reads the new URL.
+			setTimeout(() => window.dispatchEvent(new PopStateEvent("popstate")), 0);
 		},
 		[paramKey, parser],
 	);
