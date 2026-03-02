@@ -16,9 +16,10 @@ export function preferPhoneWithDialCode(phoneA: string, phoneB: string): string 
 	return phoneA.trim().startsWith("+") ? phoneA : phoneB;
 }
 
-/** WhatsApp link: digits only, no +. https://wa.me/<digits> */
+/** WhatsApp link: digits only, no +. https://wa.me/<digits>. Strip leading 0 (trunk prefix). */
 export function buildWhatsAppLink(phone: string): string {
-	const digits = phoneToDigits(phone);
+	let digits = phoneToDigits(phone);
+	if (digits.startsWith("0")) digits = digits.slice(1);
 	return `https://wa.me/${digits}`;
 }
 
