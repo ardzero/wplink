@@ -65,7 +65,7 @@ export function ShareLink({
 					</div>
 
 					<Img
-						src={getQrCode(sharelink)}
+						src={sharelink}
 						width={176}
 						height={176}
 						alt=""

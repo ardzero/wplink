@@ -17,11 +17,10 @@ export const getBaseUrl = (path?: string): string => {
     // Add protocol if missing
     if (!hasProtocol) url = `https://${url}`;
 
-    // if path is passed, add it to the base url
     if (path) {
-        // Remove leading slash from path to avoid double slashes
-        const cleanPath = path.startsWith("/") ? path.slice(1) : path;
-        url = `${url}/${cleanPath}`;
+        const baseWithSlash = `${url}/`;
+        const relative = path.startsWith("?") ? path : path.replace(/^\//, "");
+        url = new URL(relative, baseWithSlash).href;
     }
     return url;
 };
