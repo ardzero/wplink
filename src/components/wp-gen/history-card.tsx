@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn, getBaseUrl } from "@/lib/utils";
 import type { wpData } from "@/types/wpData";
 import { FlagIcon } from "./flag";
 import { EyeIcon, Trash2 } from "lucide-react";
@@ -11,13 +11,14 @@ type THistoryCard = wpData & {
 export function HistoryCard({
 	className,
 	phone,
-	wpLink,
 	name,
 	onDelete,
 }: THistoryCard) {
+	const shareLink = getBaseUrl(`?p=${phone}&n=${name ?? ""}&c=true`);
+	// console.log("shareLink", shareLink);
 	return (
 		<a
-			href={wpLink}
+			href={shareLink}
 			className={cn(
 				"group flex h-[66px] place-items-center items-center justify-between gap-8 rounded-md bg-muted/65 p-6 transition-colors duration-200 hover:bg-muted",
 				className,

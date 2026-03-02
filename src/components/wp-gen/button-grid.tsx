@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, getBaseUrl } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { ShareLink } from "./share-link";
 import type { wpData } from "@/types/wpData";
@@ -19,10 +19,14 @@ const baseClassName =
 	"flex min-h-[180px] w-full flex-col items-center justify-center align-middle text-center justify-items-center gap-3 rounded-md bg-card hover:bg-muted transition-colors duration-200 text-foreground group";
 
 export function ButtonGrid({ className, wpData, disabled }: TButtonGrid) {
-	const [currentUrl, setCurrentUrl] = useState("");
-	useEffect(() => {
-		setCurrentUrl(window.location.href);
-	}, [disabled]);
+	// const [currentUrl, setCurrentUrl] = useState("");
+	// useEffect(() => {
+	// 	setCurrentUrl(window.location.href);
+	// }, [disabled]);
+
+	const shareLink = getBaseUrl(
+		`?p=${wpData?.phone}&n=${wpData?.name ?? ""}&c=true`,
+	);
 
 	return (
 		<div className={cn("", className)}>
@@ -71,7 +75,7 @@ export function ButtonGrid({ className, wpData, disabled }: TButtonGrid) {
 					<Download className="size-9 opacity-75" />
 					<p className="font-medium opacity-45">Save on phone</p>
 				</button>
-				<ShareLink sharelink={currentUrl} wplink={wpData?.wpLink || ""}>
+				<ShareLink sharelink={shareLink} wplink={wpData?.wpLink || ""}>
 					<Button
 						tabIndex={disabled ? -1 : 0}
 						aria-disabled={disabled}
