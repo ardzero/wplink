@@ -13,7 +13,7 @@ type TShareLink = {
 	className?: string;
 	sharelink: string;
 	children: React.ReactNode;
-	wplink?: string;
+	wplink: string;
 };
 
 const pBaseClassName =
@@ -22,7 +22,7 @@ export function ShareLink({
 	className,
 	children,
 	sharelink,
-	wplink = "https://wa.me/8801712345678",
+	wplink,
 }: TShareLink) {
 	return (
 		<Drawer>

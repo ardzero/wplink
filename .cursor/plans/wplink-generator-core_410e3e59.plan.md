@@ -77,7 +77,7 @@ Implementation: build the path as digits only (`dialDigits` + `nationalDigits`),
 
 ### 2) Core pure helpers in `src/lib/utils/wp-gen.ts`
 
-Add conversion and link-building logic in **`src/lib/utils/wp-gen.ts`** (existing file):
+Add conversion and link-building logic in `**src/lib/utils/wp-gen.ts` (existing file):
 
 - `stripToDigits(input: string): string` — digits only (enables “omit zeroes, brackets, dashes” per WhatsApp).
 - `dialDigits(dialCode: string): string` — e.g. "+880" → "880" (no `+` in wa.me path).
@@ -89,7 +89,7 @@ Add conversion and link-building logic in **`src/lib/utils/wp-gen.ts`** (existin
   - Base: `https://wa.me/{dialDigits}{nationalDigits}` (full number in international format, digits only).
   - If prefill enabled: append `?text=${encodeURIComponent(prefillMessage)}`.
 - `buildGoogleContactsLink({ name, dialCode, nationalDigits }): string`
-  - `https://contacts.google.com/new?${new URLSearchParams({ name, phone: `+${dialDigits}${nationalDigits}` }).toString()}`
+  - `https://contacts.google.com/new?${new URLSearchParams({ name, phone:` +${dialDigits}${nationalDigits} `}).toString()}`
   - URL-encode all param values
 - `buildVCard({ name, dialCode, nationalDigits }): string` (vCard 3.0; name, phone only)
 - `downloadVCard(vcard: string, filenameBase: string): void`
@@ -160,12 +160,14 @@ The Share flow exposes **two links** the user can copy:
 
 1. **WhatsApp link**: The generated `wa.me/...` link (current entry's WhatsApp Click to Chat URL).
 2. **App link**: `getBaseUrl('/number')` plus query params so that when someone opens it, the app shows the contact data (pre-filled form).
-   - Params: `phone`, `countryDialCode`, and **`name` only if name is available** (omit `name` when empty).
-   - Build with `URLSearchParams` and URL-encode values; append `?${params.toString()}` to `getBaseUrl('/number')`.
+
+- Params: `phone`, `countryDialCode`, and `**name` only if name is available (omit `name` when empty).
+- Build with `URLSearchParams` and URL-encode values; append `?${params.toString()}` to `getBaseUrl('/number')`.
 
 **When someone opens the app link:** On load of the page that hosts the generator (e.g. index or a `/number` route), read URL search params (`phone`, `countryDialCode`, `name`) and pre-fill the form so the contact data is shown.
 
 **ShareLink component** (`src/components/wp-gen/share-link.tsx`):
+
 - Receives current generated data (waLink + appShareLink, or builds app link from current wpData).
 - Shows both links in the drawer, each with its own copy button (reuse “copied” feedback pattern from `CopyButton`).
 - Optional: primary "Share" action can use `navigator.share` with the app link, falling back to copying one link to clipboard.

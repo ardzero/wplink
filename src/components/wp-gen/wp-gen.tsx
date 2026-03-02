@@ -1,9 +1,11 @@
-import { cn } from "@/lib/utils";
+import { cn, getBaseUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Download, Cog, History as HistoryIcon } from "lucide-react";
 import { ShareLink } from "./share-link";
 import { History } from "./history";
 import { Settings } from "./settings";
+import { useEffect, useState } from "react";
+import type { wpData } from "@/types/wpData";
 type TWPGen = {
 	className?: string;
 };
@@ -11,6 +13,9 @@ const baseClassName =
 	"flex min-h-[180px] w-full flex-col items-center justify-center align-middle text-center justify-items-center gap-3 rounded-md bg-card hover:bg-muted transition-colors duration-200 text-foreground group";
 
 export function WPGen({ className }: TWPGen) {
+	const [number, setNumber] = useState<string>("");
+	const [wpData, setWpData] = useState<wpData | null>(null);
+
 	return (
 		<div
 			className={cn("container flex flex-col gap-12 align-middle", className)}
@@ -51,7 +56,14 @@ export function WPGen({ className }: TWPGen) {
 					Generate Links
 				</Button>
 			</div>
-			<div className="grid grid-cols-2 gap-2">
+			<div
+				className={cn(
+					"grid grid-cols-2 gap-2 rounded-md bg-background",
+					!wpData &&
+						"pointer-events-none *:pointer-events-none *:opacity-35 dark:*:opacity-25",
+				)}
+				aria-disabled={wpData ? false : true}
+			>
 				<a href="" className={cn(baseClassName, "col-span-2")} target="_blank">
 					<img src="/favicon.svg" alt="wp-gen-1" className="size-16" />
 					<p className="text-xl font-medium opacity-45">Message on WhatsApp</p>
@@ -66,9 +78,10 @@ export function WPGen({ className }: TWPGen) {
 					<p className="font-medium opacity-45">Save on phone</p>
 				</a>
 				<ShareLink
-					sharelink={
-						"https://www.youtube.com/watch?v=jI8bbMfq1e0&list=RDjI8bbMfq1e0&start_radio=1"
-					}
+					sharelink={getBaseUrl(
+						`?phone=${wpData?.phone}&countryDialCode=${wpData?.countryDialCode}&name=${wpData?.name}`,
+					)}
+					wplink={wpData?.wpLink || ""}
 				>
 					<Button
 						className={cn(
