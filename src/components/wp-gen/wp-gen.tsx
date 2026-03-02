@@ -44,7 +44,7 @@ export function WPGen({ className }: TWPGen) {
 		setWpData({
 			phone: number,
 			wpLink: "",
-			name: "",
+			name: name,
 			countryDialCode: countryDialCode || undefined,
 		});
 		setCompleted(true);
@@ -59,15 +59,15 @@ export function WPGen({ className }: TWPGen) {
 
 	return (
 		<div
-			className={cn("container flex flex-col gap-12 align-middle", className)}
+			className={cn("container flex flex-col gap-6 align-middle", className)}
 		>
 			<WPNav />
-			<form onSubmit={handleSubmit} className="flex flex-wrap gap-2">
+			<form onSubmit={handleSubmit} className="mb-2 flex flex-wrap gap-2">
 				<div className="flex w-full flex-wrap justify-end gap-2 align-bottom min-[525px]:flex-nowrap">
 					<div className="w-full grow basis-1/2">
-						<label htmlFor="name">
+						{/* <label htmlFor="name">
 							Name <span className="text-muted-foreground/65">(optional)</span>
-						</label>
+						</label> */}
 						<input
 							disabled={completed}
 							aria-disabled={completed}
@@ -77,7 +77,7 @@ export function WPGen({ className }: TWPGen) {
 							id="name"
 							name="name"
 							type="text"
-							placeholder="John Doe"
+							placeholder="Name (optional)"
 							className={cn(
 								"no-autofill-bg w-full rounded-md border-none bg-card py-3.5 pr-12 pl-4 text-base ring-muted outline-none focus-visible:ring-1",
 								completed && "pointer-events-none text-muted-foreground/65!",
