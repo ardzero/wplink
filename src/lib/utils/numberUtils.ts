@@ -55,7 +55,7 @@ export const sanitizePhoneInput = (value: string): string => {
     let out = value.replace(PHONE_INPUT_REGEX, "");
     // At most one leading +
     const hasPlus = out.includes("+");
-    out = out.replace(/\+/g, "");
+    out = out.replace(/\+/g, "").replace(/\s/g, "");
     if (hasPlus) out = "+" + out;
     // E.164: max 15 digits
     const digits = out.replace(/\D/g, "");
