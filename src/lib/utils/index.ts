@@ -49,9 +49,8 @@ export function removeDuplicates(arr1: string[], arr2: string[]): string[] {
 }
 // qr code img generator, default size is 250x250px
 export function getQrCode(link: string, size?: string): string {
-    const qrValue = link;
     const qrSize = size || "250";
-    return `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${qrValue}`;
+    return `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${encodeURIComponent(link)}`;
 }
 
 // check if email is valid and returns true or false

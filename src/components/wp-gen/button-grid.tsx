@@ -27,7 +27,6 @@ export function ButtonGrid({ className, wpData, disabled }: TButtonGrid) {
 	const shareLink = getBaseUrl(
 		`?p=${wpData?.phone}&n=${wpData?.name ?? ""}&c=true`,
 	);
-
 	return (
 		<div className={cn("", className)}>
 			<div

@@ -22,12 +22,16 @@ export function buildWhatsAppLink(phone: string): string {
 	return `https://wa.me/${digits}`;
 }
 
-/** Google Contacts new contact URL. Phone in E.164-like form (with +). */
+/** Google Contacts new contact URL. Phone in E.164-like form (with +). Uses givenname/familyname (Google ignores "name"). */
 export function buildGoogleContactsLink(phone: string, name?: string): string {
 	const withPlus = phone.trim().startsWith("+")
 		? phone.trim()
 		: `+${phoneToDigits(phone)}`;
-	const params = new URLSearchParams({ phone: withPlus, name: name ?? "" });
+	const trimmed = (name ?? "").trim();
+	const space = trimmed.indexOf(" ");
+	const givenname = space === -1 ? trimmed : trimmed.slice(0, space);
+	const familyname = space === -1 ? "" : trimmed.slice(space + 1);
+	const params = new URLSearchParams({ phone: withPlus, givenname, familyname });
 	return `https://contacts.google.com/new?${params.toString()}`;
 }
 
