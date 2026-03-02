@@ -4,8 +4,9 @@ import { Download, Cog, History as HistoryIcon } from "lucide-react";
 import { ShareLink } from "./share-link";
 import { History } from "./history";
 import { Settings } from "./settings";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import type { wpData } from "@/types/wpData";
+import { FlagIcon } from "./flag";
 type TWPGen = {
 	className?: string;
 };
@@ -13,8 +14,19 @@ const baseClassName =
 	"flex min-h-[180px] w-full flex-col items-center justify-center align-middle text-center justify-items-center gap-3 rounded-md bg-card hover:bg-muted transition-colors duration-200 text-foreground group";
 
 export function WPGen({ className }: TWPGen) {
-	const [number, setNumber] = useState<string>("");
+	const inputRef = useRef<HTMLInputElement>(null);
 	const [wpData, setWpData] = useState<wpData | null>(null);
+
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		const number = inputRef.current?.value ?? "";
+		setWpData({
+			phone: number,
+			wpLink: "",
+			name: "",
+			countryDialCode: "",
+		});
+	};
 
 	return (
 		<div
@@ -46,16 +58,26 @@ export function WPGen({ className }: TWPGen) {
 					</Settings>
 				</div>
 			</nav>
-			<div className="flex flex-wrap gap-3">
-				<input
-					type="text"
-					placeholder="+880-XXXXX XXXXX"
-					className="grow rounded-md border-none bg-card px-4 py-3.5 text-base ring-muted outline-none focus-visible:ring-1 sm:max-w-[350px]"
-				/>
-				<Button className="h-full min-w-[180px] grow rounded-md bg-primary/65 px-4 py-3.5 text-base text-primary-foreground hover:bg-primary/90">
+			<form onSubmit={handleSubmit} className="flex flex-wrap gap-3">
+				<div className="relative w-full grow sm:max-w-[380px]">
+					<input
+						ref={inputRef}
+						id="phone"
+						name="phone"
+						type="tel"
+						placeholder="+880-XXXXX XXXXX"
+						className="h-full w-full rounded-md border-none bg-card py-3.5 pr-12 pl-4 text-base ring-muted outline-none focus-visible:ring-1"
+					/>
+					<FlagIcon
+						countryDialCode={wpData?.countryDialCode}
+						className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2"
+					/>
+				</div>
+
+				<Button className="h-full min-w-[150px] grow rounded-md bg-primary/65 px-4 py-3.5 text-base text-primary-foreground hover:bg-primary/90">
 					Generate Links
 				</Button>
-			</div>
+			</form>
 			<div
 				className={cn(
 					"grid grid-cols-2 gap-2 rounded-md bg-background",
