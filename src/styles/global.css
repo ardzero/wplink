@@ -125,6 +125,16 @@
 		outline: none;
 		width: 100%;
 	}
+	/* prevent autofill from making input semi-transparent / changing color */
+	input.no-autofill-bg:-webkit-autofill,
+	input.no-autofill-bg:-webkit-autofill:hover,
+	input.no-autofill-bg:-webkit-autofill:focus,
+	input.no-autofill-bg:-webkit-autofill:active {
+		-webkit-box-shadow: 0 0 0 30px var(--card) inset !important;
+		box-shadow: 0 0 0 30px var(--card) inset !important;
+		-webkit-text-fill-color: var(--card-foreground) !important;
+		transition: background-color 5000s ease-in-out 0s;
+	}
 	body {
 		font-feature-settings:
 			"rlig" 1,

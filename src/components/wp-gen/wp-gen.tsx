@@ -102,7 +102,7 @@ export function WPGen({ className }: TWPGen) {
 						type="tel"
 						inputMode="numeric"
 						placeholder="+880-XXXXX XXXXX"
-						className="h-full w-full rounded-md border-none bg-card py-3.5 pr-12 pl-4 text-base ring-muted outline-none focus-visible:ring-1"
+						className="no-autofill-bg h-full w-full rounded-md border-none bg-card py-3.5 pr-12 pl-4 text-base ring-muted outline-none focus-visible:ring-1"
 					/>
 					<FlagIcon
 						countryDialCode={wpData?.countryDialCode}
