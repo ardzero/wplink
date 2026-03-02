@@ -8,6 +8,12 @@ import { useRef, useState } from "react";
 import type { wpData } from "@/types/wpData";
 import { FlagIcon } from "./flag";
 import { matchDialCodeFromPhone } from "@/lib/utils/wp-gen";
+
+const PHONE_INPUT_REGEX = /[^\d+\s\-()]/g;
+function sanitizePhoneInput(value: string): string {
+	return value.replace(PHONE_INPUT_REGEX, "");
+}
+
 type TWPGen = {
 	className?: string;
 };
@@ -20,7 +26,7 @@ export function WPGen({ className }: TWPGen) {
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const number = inputRef.current?.value ?? "";
+		const number = wpData?.phone ?? "";
 		const countryDialCode = matchDialCodeFromPhone(number);
 		setWpData({
 			phone: number,
@@ -32,9 +38,10 @@ export function WPGen({ className }: TWPGen) {
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const raw = e.target.value;
-		const countryDialCode = matchDialCodeFromPhone(raw);
+		const sanitized = sanitizePhoneInput(raw);
+		const countryDialCode = matchDialCodeFromPhone(sanitized);
 		setWpData({
-			phone: raw,
+			phone: sanitized,
 			countryDialCode: countryDialCode || undefined,
 			wpLink: "",
 			name: "",
@@ -75,10 +82,12 @@ export function WPGen({ className }: TWPGen) {
 				<div className="relative w-full grow sm:max-w-[380px]">
 					<input
 						ref={inputRef}
+						value={wpData?.phone ?? ""}
 						onChange={handleInputChange}
 						id="phone"
 						name="phone"
 						type="tel"
+						inputMode="numeric"
 						placeholder="+880-XXXXX XXXXX"
 						className="h-full w-full rounded-md border-none bg-card py-3.5 pr-12 pl-4 text-base ring-muted outline-none focus-visible:ring-1"
 					/>
