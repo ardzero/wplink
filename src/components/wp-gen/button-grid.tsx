@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { cn, getBaseUrl } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { ShareLink } from "./share-link";

@@ -14,11 +14,10 @@ export function HistoryCard({
 	name,
 	onDelete,
 }: THistoryCard) {
-	const shareLink = getBaseUrl(`?p=${phone}&n=${name ?? ""}&c=true`);
-	// console.log("shareLink", shareLink);
+	const contactLink = getBaseUrl(`?p=${phone}&n=${name ?? ""}&c=true`);
 	return (
 		<a
-			href={shareLink}
+			href={contactLink}
 			className={cn(
 				"group flex h-[66px] place-items-center items-center justify-between gap-8 rounded-md bg-muted/65 p-6 transition-colors duration-200 hover:bg-muted",
 				className,
