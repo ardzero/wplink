@@ -1,14 +1,13 @@
-import { cn, getQrCode } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import {
 	Drawer,
-	DrawerClose,
 	DrawerContent,
 	DrawerTrigger,
 } from "@/components/ui/drawer";
-
 import { ScrollArea } from "@/components/ui/scroll-area";
-// import { Separator } from "@/components/ui/separator";
-import { sampleHistory } from "@/lib/data/sampleHistory";
+import { useStorage } from "@/hooks/useStorage";
+import type { StoredWpData } from "@/types/wpData";
+import { phoneToDigits } from "@/lib/utils/wp-gen";
 import { HistoryCard } from "./history-card";
 import { HistoryIcon } from "lucide-react";
 
@@ -18,6 +17,17 @@ type THistory = {
 };
 
 export function History({ className, children }: THistory) {
+	const [history, setHistory] = useStorage("wplink_history", {
+		default: [] as StoredWpData[],
+	});
+
+	const handleDelete = (entry: StoredWpData) => {
+		const digits = phoneToDigits(entry.phone);
+		setHistory(
+			history.filter((e) => phoneToDigits(e.phone) !== digits),
+		);
+	};
+
 	return (
 		<Drawer>
 			<DrawerTrigger asChild>{children}</DrawerTrigger>
@@ -32,8 +42,12 @@ export function History({ className, children }: THistory) {
 
 					<ScrollArea className="relative h-[500px] w-full">
 						<div className="flex flex-col gap-4 pb-16">
-							{sampleHistory.map((item) => (
-								<HistoryCard key={item.phone} {...item} />
+							{history.map((item) => (
+								<HistoryCard
+									key={`${item.phone}-${item.createdAt ?? 0}`}
+									{...item}
+									onDelete={() => handleDelete(item)}
+								/>
 							))}
 						</div>
 						<div

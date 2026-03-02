@@ -1,8 +1,10 @@
 export type wpData = {
-    phone: string;
-    wpLink: string;
-    name?: string;
+	phone: string;
+	wpLink: string;
+	name?: string;
 };
+
+export type StoredWpData = wpData & { createdAt?: string };
 
 export type countryCode = {
     code: string;

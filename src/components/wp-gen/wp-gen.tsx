@@ -1,11 +1,13 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import type { wpData } from "@/types/wpData";
-import {
-	matchDialCodeFromPhone,
-	sanitizePhoneInput,
-} from "@/lib/utils/numberUtils";
+import type { StoredWpData, wpData } from "@/types/wpData";
+import { sanitizePhoneInput } from "@/lib/utils/numberUtils";
 import { parseAsBoolean, useUrlParam } from "@/hooks/useUrlParam";
+import { useStorage } from "@/hooks/useStorage";
+import {
+	buildWhatsAppLink,
+	upsertHistoryEntry,
+} from "@/lib/utils/wp-gen";
 
 import { Button } from "@/components/ui/button";
 import { WPNav } from "./wp-nav";
@@ -32,16 +34,30 @@ export function WPGen({ className }: TWPGen) {
 	);
 
 	const [wpData, setWpData] = useState<wpData | null>(null);
-	// const [countryDialCode, setCountryDialCode] = useState<string | undefined>(
-	// 	undefined,
-	// );
+	const [history, setHistory] = useStorage("wplink_history", {
+		default: [] as StoredWpData[],
+	});
+	const historyRef = useRef(history);
+	historyRef.current = history;
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (!phone) return;
-		// logic to save the in local storage for history and also to set the state for the wpData so it can be displayed in the button grid
+		const wpLink = buildWhatsAppLink(phone);
+		const data: wpData = { phone, wpLink, name: name || undefined };
+		setWpData(data);
 		setCompleted(true);
+		setHistory(upsertHistoryEntry(history, data));
 	};
+
+	// Hydrate from URL when c=true and p present
+	useEffect(() => {
+		if (!completed || !phone) return;
+		const wpLink = buildWhatsAppLink(phone);
+		const data: wpData = { phone, wpLink, name: name || undefined };
+		setWpData(data);
+		setHistory(upsertHistoryEntry(historyRef.current, data));
+	}, [completed, phone, name, setHistory]);
 
 	const handleReset = () => {
 		setPhone("");

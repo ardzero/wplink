@@ -1,7 +1,13 @@
-import { cn, getBaseUrl } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { ShareLink } from "./share-link";
 import type { wpData } from "@/types/wpData";
+import {
+	buildGoogleContactsLink,
+	buildVCard,
+	downloadVCard,
+} from "@/lib/utils/wp-gen";
 import { Download } from "lucide-react";
 
 type TButtonGrid = {
@@ -13,6 +19,11 @@ const baseClassName =
 	"flex min-h-[180px] w-full flex-col items-center justify-center align-middle text-center justify-items-center gap-3 rounded-md bg-card hover:bg-muted transition-colors duration-200 text-foreground group";
 
 export function ButtonGrid({ className, wpData, disabled }: TButtonGrid) {
+	const [currentUrl, setCurrentUrl] = useState("");
+	useEffect(() => {
+		setCurrentUrl(window.location.href);
+	}, [disabled]);
+
 	return (
 		<div className={cn("", className)}>
 			<div
@@ -35,7 +46,9 @@ export function ButtonGrid({ className, wpData, disabled }: TButtonGrid) {
 				</a>
 				{/* bottom 2 */}
 				<a
-					href=""
+					href={
+						wpData ? buildGoogleContactsLink(wpData.phone, wpData.name) : ""
+					}
 					className={cn(baseClassName)}
 					target="_blank"
 					tabIndex={disabled ? -1 : 0}
@@ -45,17 +58,20 @@ export function ButtonGrid({ className, wpData, disabled }: TButtonGrid) {
 					<p className="font-medium opacity-45">Google Contact</p>
 				</a>
 				<button
+					type="button"
 					className={cn(baseClassName)}
 					tabIndex={disabled ? -1 : 0}
 					aria-disabled={disabled}
+					onClick={() => {
+						if (!wpData || disabled) return;
+						const vcard = buildVCard(wpData.name, wpData.phone, new Date());
+						downloadVCard(vcard, wpData.phone.replace(/\D/g, "").slice(-8));
+					}}
 				>
 					<Download className="size-9 opacity-75" />
 					<p className="font-medium opacity-45">Save on phone</p>
 				</button>
-				<ShareLink
-					sharelink={getBaseUrl(`?phone=${wpData?.phone}&name=${wpData?.name}`)}
-					wplink={wpData?.wpLink || ""}
-				>
+				<ShareLink sharelink={currentUrl} wplink={wpData?.wpLink || ""}>
 					<Button
 						tabIndex={disabled ? -1 : 0}
 						aria-disabled={disabled}

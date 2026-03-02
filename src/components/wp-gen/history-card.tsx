@@ -1,13 +1,20 @@
 import { cn } from "@/lib/utils";
 import type { wpData } from "@/types/wpData";
 import { FlagIcon } from "./flag";
-import { EyeIcon } from "lucide-react";
+import { EyeIcon, Trash2 } from "lucide-react";
 
 type THistoryCard = wpData & {
 	className?: string;
+	onDelete?: () => void;
 };
 
-export function HistoryCard({ className, phone, wpLink, name }: THistoryCard) {
+export function HistoryCard({
+	className,
+	phone,
+	wpLink,
+	name,
+	onDelete,
+}: THistoryCard) {
 	return (
 		<a
 			href={wpLink}
@@ -23,7 +30,23 @@ export function HistoryCard({ className, phone, wpLink, name }: THistoryCard) {
 					{name && <p className="text-sm text-muted-foreground">{name}</p>}
 				</div>
 			</div>
-			<EyeIcon className="size-4.5 opacity-35 transition-opacity duration-200 group-hover:opacity-100" />
+			<div className="flex items-center gap-2">
+				{onDelete && (
+					<button
+						type="button"
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							onDelete();
+						}}
+						className="rounded p-1.5 text-muted-foreground transition-colors hover:bg-destructive/15 hover:text-destructive"
+						aria-label="Delete from history"
+					>
+						<Trash2 className="size-4.5" />
+					</button>
+				)}
+				<EyeIcon className="size-4.5 opacity-35 transition-opacity duration-200 group-hover:opacity-100" />
+			</div>
 		</a>
 	);
 }
