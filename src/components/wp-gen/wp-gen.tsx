@@ -7,6 +7,7 @@ import { Settings } from "./settings";
 import { useRef, useState } from "react";
 import type { wpData } from "@/types/wpData";
 import { FlagIcon } from "./flag";
+import { matchDialCodeFromPhone } from "@/lib/utils/wp-gen";
 type TWPGen = {
 	className?: string;
 };
@@ -20,11 +21,23 @@ export function WPGen({ className }: TWPGen) {
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const number = inputRef.current?.value ?? "";
+		const countryDialCode = matchDialCodeFromPhone(number);
 		setWpData({
 			phone: number,
 			wpLink: "",
 			name: "",
-			countryDialCode: "",
+			countryDialCode: countryDialCode || undefined,
+		});
+	};
+
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const raw = e.target.value;
+		const countryDialCode = matchDialCodeFromPhone(raw);
+		setWpData({
+			phone: raw,
+			countryDialCode: countryDialCode || undefined,
+			wpLink: "",
+			name: "",
 		});
 	};
 
@@ -62,6 +75,7 @@ export function WPGen({ className }: TWPGen) {
 				<div className="relative w-full grow sm:max-w-[380px]">
 					<input
 						ref={inputRef}
+						onChange={handleInputChange}
 						id="phone"
 						name="phone"
 						type="tel"
@@ -70,7 +84,7 @@ export function WPGen({ className }: TWPGen) {
 					/>
 					<FlagIcon
 						countryDialCode={wpData?.countryDialCode}
-						className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2"
+						className="absolute top-1/2 right-4 -translate-y-1/2"
 					/>
 				</div>
 
@@ -81,10 +95,10 @@ export function WPGen({ className }: TWPGen) {
 			<div
 				className={cn(
 					"grid grid-cols-2 gap-2 rounded-md bg-background",
-					!wpData &&
+					!wpData?.wpLink &&
 						"pointer-events-none *:pointer-events-none *:opacity-35 dark:*:opacity-25",
 				)}
-				aria-disabled={wpData ? false : true}
+				aria-disabled={wpData?.wpLink ? false : true}
 			>
 				<a href="" className={cn(baseClassName, "col-span-2")} target="_blank">
 					<img src="/favicon.svg" alt="wp-gen-1" className="size-16" />

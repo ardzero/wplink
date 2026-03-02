@@ -8,12 +8,15 @@ type TFlag = {
 };
 
 export function FlagIcon({ className, countryDialCode }: TFlag) {
+	const country = countryDialCode
+		? getCountryByDialCode(countryDialCode)
+		: null;
 	// if (!countryDialCode) return null;
 	return (
-		<Avatar className={cn("size-5", className)}>
+		<Avatar className={cn("size-5", className)} title={country?.country}>
 			{countryDialCode && (
 				<AvatarImage
-					src={`/flags/${getCountryByDialCode(countryDialCode)?.code}.svg`}
+					src={`/flags/${country?.code}.svg`}
 					alt={countryDialCode}
 					className={cn(
 						"h-full w-full object-cover",
