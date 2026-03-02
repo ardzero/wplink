@@ -10,8 +10,21 @@ import { FlagIcon } from "./flag";
 import { matchDialCodeFromPhone } from "@/lib/utils/wp-gen";
 
 const PHONE_INPUT_REGEX = /[^\d+\s\-()]/g;
+const E164_MAX_DIGITS = 15;
+
 function sanitizePhoneInput(value: string): string {
-	return value.replace(PHONE_INPUT_REGEX, "");
+	let out = value.replace(PHONE_INPUT_REGEX, "");
+	// At most one leading +
+	const hasPlus = out.includes("+");
+	out = out.replace(/\+/g, "");
+	if (hasPlus) out = "+" + out;
+	// E.164: max 15 digits
+	const digits = out.replace(/\D/g, "");
+	if (digits.length > E164_MAX_DIGITS) {
+		const keep = digits.slice(0, E164_MAX_DIGITS);
+		out = hasPlus ? "+" + keep : keep;
+	}
+	return out;
 }
 
 type TWPGen = {

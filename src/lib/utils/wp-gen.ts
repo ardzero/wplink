@@ -20,17 +20,27 @@ function normalizePhoneDigits(phone: string): string {
     if (digits.startsWith("00")) return digits.slice(2);
     return digits;
 }
+/** Minimum length of national number (after dial code) to consider the number valid */
+const MIN_NATIONAL_LENGTH = 7;
+
 /**
- * Fuzzy match a phone number (or dial code string) to a country dial code.
- * Handles: "+44 7911 123456", "447911123456", "0044 79 11 12 34 56", "44", "+ 44".
- * Returns the canonical dial code (e.g. "+44") or null if no match.
+ * Fuzzy match a phone number to a country dial code. Returns the dial code when:
+ * - Input starts with "+" and the digits after it start with a dial code (exact or more digits), or
+ * - The input is exactly a dial code (e.g. "880", "44"), or
+ * - The input is a full number (dial code + at least MIN_NATIONAL_LENGTH digits).
+ * Returns null for partial numbers without "+" (e.g. "880186" with only 3 national digits).
  */
 export function matchDialCodeFromPhone(phone: string): string | null {
     if (!phone?.trim()) return null;
     const digits = normalizePhoneDigits(phone);
     if (!digits.length) return null;
+    const startsWithPlus = phone.trim().startsWith("+");
     for (const prefix of DIAL_CODE_PREFIXES) {
-        if (digits === prefix || digits.startsWith(prefix)) {
+        if (!digits.startsWith(prefix)) continue;
+        const nationalLength = digits.length - prefix.length;
+        const exactMatch = digits === prefix;
+        const fullNumber = nationalLength >= MIN_NATIONAL_LENGTH;
+        if (startsWithPlus || exactMatch || fullNumber) {
             return DIAL_BY_PREFIX.get(prefix) ?? `+${prefix}`;
         }
     }
