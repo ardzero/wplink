@@ -53,9 +53,7 @@ export function ButtonGrid({ className, wpData, disabled }: TButtonGrid) {
 					<p className="font-medium opacity-45">Save on phone</p>
 				</button>
 				<ShareLink
-					sharelink={getBaseUrl(
-						`?phone=${wpData?.phone}&countryDialCode=${wpData?.countryDialCode}&name=${wpData?.name}`,
-					)}
+					sharelink={getBaseUrl(`?phone=${wpData?.phone}&name=${wpData?.name}`)}
 					wplink={wpData?.wpLink || ""}
 				>
 					<Button

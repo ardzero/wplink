@@ -1,21 +1,13 @@
 import { cn } from "@/lib/utils";
 import type { wpData } from "@/types/wpData";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getCountryByDialCode } from "@/lib/data/countryCodes";
+import { FlagIcon } from "./flag";
 import { EyeIcon } from "lucide-react";
 
 type THistoryCard = wpData & {
 	className?: string;
 };
 
-export function HistoryCard({
-	className,
-	phone,
-	wpLink,
-	name,
-	countryDialCode,
-}: THistoryCard) {
+export function HistoryCard({ className, phone, wpLink, name }: THistoryCard) {
 	return (
 		<a
 			href={wpLink}
@@ -25,16 +17,7 @@ export function HistoryCard({
 			)}
 		>
 			<div className="flex items-center gap-4">
-				<Avatar className="size-5">
-					{countryDialCode && (
-						<AvatarImage
-							src={`/flags/${getCountryByDialCode(countryDialCode)?.code}.svg`}
-							alt={countryDialCode}
-							className="h-full w-full object-cover"
-						/>
-					)}
-					<AvatarFallback className="bg-foreground/10">?</AvatarFallback>
-				</Avatar>
+				<FlagIcon phone={phone} className="size-5" />
 				<div>
 					<p className="font-medium">{phone}</p>
 					{name && <p className="text-sm text-muted-foreground">{name}</p>}
