@@ -9,5 +9,6 @@ export type countryCode = {
     code: string;
     country: string;
     dialCode: string;
+    maxDigits: number;
 };
 
