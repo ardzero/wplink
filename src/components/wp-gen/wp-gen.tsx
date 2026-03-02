@@ -38,15 +38,8 @@ export function WPGen({ className }: TWPGen) {
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const number = phone;
-		if (!number) return;
-		const countryDialCode = matchDialCodeFromPhone(number);
-		setWpData({
-			phone: number,
-			wpLink: "",
-			name: name,
-			countryDialCode: countryDialCode || undefined,
-		});
+		if (!phone) return;
+		// logic to save the in local storage for history and also to set the state for the wpData so it can be displayed in the button grid
 		setCompleted(true);
 	};
 
@@ -112,16 +105,13 @@ export function WPGen({ className }: TWPGen) {
 				<div className="relative flex w-full gap-2">
 					<Button
 						size={"icon"}
-						// className={cn(
-						// 	"relative z-10 h-full min-w-[40px] rounded-md bg-rose-500/50 text-foreground/85",
-						// 	!completed
-						// 		? "pointer-events-none opacity-65"
-						// 		: "hover:bg-rose-500/55 hover:text-foreground",
-						// )}
 						className="h-full min-w-[40px]"
 						disabled={!completed}
+						aria-disabled={!completed}
+						aria-label="Reset the number"
 						variant={"destructive"}
 						onClick={handleReset}
+						title="Reset"
 					>
 						<span className="sr-only">Reset</span>
 						<RotateCcw className="size-4" />
