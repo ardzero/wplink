@@ -30,7 +30,7 @@ const MIN_NATIONAL_LENGTH = 7;
  * - The input is a full number (dial code + at least MIN_NATIONAL_LENGTH digits).
  * Returns null for partial numbers without "+" (e.g. "880186" with only 3 national digits).
  */
-export function matchDialCodeFromPhone(phone: string): string | null {
+export const matchDialCodeFromPhone = (phone: string): string | null => {
     if (!phone?.trim()) return null;
     const digits = normalizePhoneDigits(phone);
     if (!digits.length) return null;
@@ -45,4 +45,23 @@ export function matchDialCodeFromPhone(phone: string): string | null {
         }
     }
     return null;
+}
+
+
+const PHONE_INPUT_REGEX = /[^\d+\s\-()]/g;
+const E164_MAX_DIGITS = 15;
+
+export const sanitizePhoneInput = (value: string): string => {
+    let out = value.replace(PHONE_INPUT_REGEX, "");
+    // At most one leading +
+    const hasPlus = out.includes("+");
+    out = out.replace(/\+/g, "");
+    if (hasPlus) out = "+" + out;
+    // E.164: max 15 digits
+    const digits = out.replace(/\D/g, "");
+    if (digits.length > E164_MAX_DIGITS) {
+        const keep = digits.slice(0, E164_MAX_DIGITS);
+        out = hasPlus ? "+" + keep : keep;
+    }
+    return out;
 }
