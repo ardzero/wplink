@@ -55,13 +55,20 @@ export const sanitizePhoneInput = (value: string): string => {
     let out = value.replace(PHONE_INPUT_REGEX, "");
     // At most one leading +
     const hasPlus = out.includes("+");
-    out = out.replace(/\+/g, "").replace(/\s/g, "");
+    out = out.replace(/\+/g, "");
+    // Collapse multiple spaces to a single space (allow single spaces, max 1 between chars)
+    out = out.replace(/\s+/g, " ");
     if (hasPlus) out = "+" + out;
-    // E.164: max 15 digits
+    // E.164: max 15 digits — truncate from end keeping spacing
     const digits = out.replace(/\D/g, "");
     if (digits.length > E164_MAX_DIGITS) {
-        const keep = digits.slice(0, E164_MAX_DIGITS);
-        out = hasPlus ? "+" + keep : keep;
+        let digitCount = 0;
+        let i = 0;
+        while (i < out.length && digitCount < E164_MAX_DIGITS) {
+            if (/\d/.test(out[i])) digitCount++;
+            i++;
+        }
+        out = out.slice(0, i);
     }
     return out;
 }
