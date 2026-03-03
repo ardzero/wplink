@@ -16,20 +16,20 @@ export type WplinkPrivacySettings = {
 };
 
 export const defaultPrivacySettings: WplinkPrivacySettings = {
-	blurNumbersInHistory: true,
-	blurNamesInHistory: true,
-	blurNameInHome: true,
-	blurNumberInHome: true,
-	blurShareLinks: true,
+	blurNumbersInHistory: false,
+	blurNamesInHistory: false,
+	blurNameInHome: false,
+	blurNumberInHome: false,
+	blurShareLinks: false,
 	ultraPrivacyMode: false,
 };
 
 export const WPLINK_PRIVACY_STORAGE_KEY = "wplink_privacy_settings";
 
 export type countryCode = {
-    code: string;
-    country: string;
-    dialCode: string;
-    maxDigits: number;
+	code: string;
+	country: string;
+	dialCode: string;
+	maxDigits: number;
 };
 
