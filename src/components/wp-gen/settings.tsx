@@ -72,6 +72,16 @@ export function Settings({ className, children }: TSettings) {
 								</h2>
 								<div className="space-y-2">
 									<SwitchCard
+										id="ultra-privacy"
+										checked={privacy.ultraPrivacyMode}
+										onCheckedChange={(v) =>
+											updatePrivacy({ ultraPrivacyMode: v })
+										}
+									>
+										Ultra privacy (blur all links, names, numbers, including
+										input)
+									</SwitchCard>
+									<SwitchCard
 										id="blur-numbers-history"
 										checked={privacy.blurNumbersInHistory}
 										onCheckedChange={(v) =>
@@ -115,16 +125,6 @@ export function Settings({ className, children }: TSettings) {
 										}
 									>
 										Blur share links
-									</SwitchCard>
-									<SwitchCard
-										id="ultra-privacy"
-										checked={privacy.ultraPrivacyMode}
-										onCheckedChange={(v) =>
-											updatePrivacy({ ultraPrivacyMode: v })
-										}
-									>
-										Ultra privacy (blur all links, names, numbers, including
-										input)
 									</SwitchCard>
 								</div>
 							</div>
