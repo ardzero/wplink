@@ -34,9 +34,6 @@ export function History({ className, children }: THistory) {
 						</h1>
 						<div className="group relative -mt-1 w-full max-w-[240px]">
 							<input
-								// disabled={completed}
-								// aria-disabled={completed}
-								// tabIndex={completed ? -1 : 0}
 								// ref={inputRef}
 								// value={phone}
 								// onChange={(e) => setPhone(e.target.value)}
@@ -46,7 +43,7 @@ export function History({ className, children }: THistory) {
 								inputMode="numeric"
 								placeholder="Search name or number"
 								className={cn(
-									"no-autofill-bg w-full rounded-md border-none bg-card py-2 pr-12 pl-4 text-base ring-muted outline-none focus-visible:ring-1",
+									"no-autofill-bg w-full rounded-md border-none bg-card py-2 pr-12 pl-4 text-sm ring-muted outline-none focus-visible:ring-1",
 								)}
 							/>
 							<SearchIcon className="absolute top-1/2 right-4 size-4 -translate-y-1/2 opacity-35 transition-opacity duration-200 group-focus-within:opacity-100" />
