@@ -1,11 +1,17 @@
+import { useMemo, useState } from "react";
+import Fuse from "fuse.js";
 import { cn } from "@/lib/utils";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useStorage } from "@/hooks/useStorage";
 import type { StoredWpData } from "@/types/wpData";
 import { phoneToDigits } from "@/lib/utils/wp-gen";
+import { getCountryByDialCode } from "@/lib/data/countryCodes";
+import { matchDialCodeFromPhone } from "@/lib/utils/numberUtils";
 import { HistoryCard } from "./history-card";
 import { HistoryIcon, SearchIcon } from "lucide-react";
+
+type SearchableEntry = StoredWpData & { countryName: string };
 
 type THistory = {
 	className?: string;
@@ -16,6 +22,30 @@ export function History({ className, children }: THistory) {
 	const [history, setHistory] = useStorage("wplink_history", {
 		default: [] as StoredWpData[],
 	});
+	const [query, setQuery] = useState("");
+
+	const searchableList = useMemo<SearchableEntry[]>(() => {
+		return history.map((entry) => {
+			const dialCode = matchDialCodeFromPhone(entry.phone);
+			const country = dialCode ? getCountryByDialCode(dialCode) : null;
+			return { ...entry, countryName: country?.country ?? "" };
+		});
+	}, [history]);
+
+	const fuse = useMemo(
+		() =>
+			new Fuse(searchableList, {
+				keys: ["name", "phone", "countryName"],
+				threshold: 0.3,
+			}),
+		[searchableList],
+	);
+
+	const filteredHistory = useMemo(() => {
+		const q = query.trim();
+		if (!q) return searchableList;
+		return fuse.search(q).map((r) => r.item);
+	}, [query, searchableList, fuse]);
 
 	const handleDelete = (entry: StoredWpData) => {
 		const digits = phoneToDigits(entry.phone);
@@ -34,25 +64,23 @@ export function History({ className, children }: THistory) {
 						</h1>
 						<div className="group relative -mt-1 w-full max-w-[240px]">
 							<input
-								// ref={inputRef}
-								// value={phone}
-								// onChange={(e) => setPhone(e.target.value)}
-								id="phone"
-								name="phone"
-								type="tel"
-								inputMode="numeric"
-								placeholder="Search name or number"
+								id="history-search"
+								name="history-search"
+								type="search"
+								value={query}
+								onChange={(e) => setQuery(e.target.value)}
+								placeholder="Search name, number, country"
 								className={cn(
-									"no-autofill-bg w-full rounded-md border-none bg-card py-2 pr-12 pl-4 text-sm ring-muted outline-none focus-visible:ring-1",
+									"no-autofill-bg w-full rounded-md border-none bg-card py-2 pr-6 pl-4 text-sm ring-muted outline-none focus-visible:ring-1",
 								)}
 							/>
-							<SearchIcon className="absolute top-1/2 right-4 size-4 -translate-y-1/2 opacity-35 transition-opacity duration-200 group-focus-within:opacity-100" />
+							<SearchIcon className="absolute top-1/2 right-3 size-4 -translate-y-1/2 opacity-35 transition-opacity duration-200 group-focus-within:opacity-100" />
 						</div>
 					</div>
 
 					<ScrollArea className="relative h-[500px] w-full">
 						<div className="flex flex-col gap-4 pb-16">
-							{history.map((item) => (
+							{filteredHistory.map((item) => (
 								<HistoryCard
 									key={`${item.phone}-${item.createdAt ?? 0}`}
 									{...item}
