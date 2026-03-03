@@ -72,6 +72,7 @@ export function History({ className, children }: THistory) {
 								placeholder="Search name, number, country"
 								className={cn(
 									"no-autofill-bg w-full rounded-md border-none bg-card py-2 pr-6 pl-4 text-sm ring-muted outline-none focus-visible:ring-1",
+									"[&::-webkit-search-cancel-button]:hidden",
 								)}
 							/>
 							<SearchIcon className="absolute top-1/2 right-3 size-4 -translate-y-1/2 opacity-35 transition-opacity duration-200 group-focus-within:opacity-100" />
