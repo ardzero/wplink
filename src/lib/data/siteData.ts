@@ -6,7 +6,7 @@ export const siteData: TSiteData = {
 	favicon: "/favicon.svg", // .svg / .ico / .png
 	name: "wplink - Whatsapp Link Generator",
 	shortName: "wplink",
-	publisher: "wplink.ardastroid.com",
+	publisher: "wplink.ardzero.com",
 	baseUrl: import.meta.env.SITE, // make sure to change the link in astro.config.mjs 
 	description:
 		"Whatsapp Link Generator is a tool that auto generates whatsapp link and direct contact save link from a phone number",
