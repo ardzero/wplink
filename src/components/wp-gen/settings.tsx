@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Cog, Trash2 } from "lucide-react";
@@ -5,6 +6,16 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useStorage } from "@/hooks/useStorage";
 import { Button } from "@/components/ui/button";
 import { SwitchCard } from "@/components/wp-gen/switch-card";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
 	defaultPrivacySettings,
 	WPLINK_PRIVACY_STORAGE_KEY,
@@ -25,14 +36,11 @@ export function Settings({ className, children }: TSettings) {
 	const [privacy, setPrivacy] = useStorage(WPLINK_PRIVACY_STORAGE_KEY, {
 		default: defaultPrivacySettings,
 	});
+	const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
 
 	const handleClearHistory = () => {
-		if (
-			typeof window !== "undefined" &&
-			window.confirm("Clear all history? This cannot be undone.")
-		) {
-			setHistory([]);
-		}
+		setHistory([]);
+		setClearConfirmOpen(false);
 	};
 
 	const updatePrivacy = (patch: Partial<WplinkPrivacySettings>) => {
@@ -56,12 +64,31 @@ export function Settings({ className, children }: TSettings) {
 								<h2 className="mb-2 font-medium opacity-70">Data</h2>
 								<Button
 									variant="destructive"
-									onClick={handleClearHistory}
+									onClick={() => setClearConfirmOpen(true)}
 									className="gap-2"
 								>
 									<Trash2 className="size-4" />
 									Clear history
 								</Button>
+								<AlertDialog open={clearConfirmOpen} onOpenChange={setClearConfirmOpen}>
+									<AlertDialogContent>
+										<AlertDialogHeader>
+											<AlertDialogTitle>Clear all history?</AlertDialogTitle>
+											<AlertDialogDescription>
+												This cannot be undone. All your generated link history will be permanently removed.
+											</AlertDialogDescription>
+										</AlertDialogHeader>
+										<AlertDialogFooter>
+											<AlertDialogCancel>Cancel</AlertDialogCancel>
+											<AlertDialogAction
+												onClick={handleClearHistory}
+												className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+											>
+												Clear history
+											</AlertDialogAction>
+										</AlertDialogFooter>
+									</AlertDialogContent>
+								</AlertDialog>
 							</div>
 							<div>
 								<h2 className="mb-2 font-medium opacity-70">
