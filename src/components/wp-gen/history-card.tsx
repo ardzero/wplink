@@ -3,9 +3,13 @@ import type { wpData } from "@/types/wpData";
 import { FlagIcon } from "./flag";
 import { EyeIcon, Trash2 } from "lucide-react";
 
+const blurClass = "blur-xs hover:blur-none";
+
 type THistoryCard = wpData & {
 	className?: string;
 	onDelete?: () => void;
+	blurNumber?: boolean;
+	blurName?: boolean;
 };
 
 export function HistoryCard({
@@ -13,6 +17,8 @@ export function HistoryCard({
 	phone,
 	name,
 	onDelete,
+	blurNumber = true,
+	blurName = true,
 }: THistoryCard) {
 	const contactLink = getBaseUrl(`?p=${phone}&n=${name ?? ""}&c=true`);
 	return (
@@ -26,8 +32,24 @@ export function HistoryCard({
 			<div className="flex items-center gap-4">
 				<FlagIcon phone={phone} className="size-5" />
 				<div>
-					<p className="font-medium">{phone}</p>
-					{name && <p className="text-sm text-muted-foreground">{name}</p>}
+					<p
+						className={cn(
+							"font-medium",
+							blurNumber && blurClass,
+						)}
+					>
+						{phone}
+					</p>
+					{name && (
+						<p
+							className={cn(
+								"text-sm text-muted-foreground",
+								blurName && blurClass,
+							)}
+						>
+							{name}
+						</p>
+					)}
 				</div>
 			</div>
 			<div className="flex items-center gap-2">

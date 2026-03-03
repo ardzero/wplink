@@ -5,6 +5,10 @@ import { sanitizePhoneInput } from "@/lib/utils/numberUtils";
 import { parseAsBoolean, useUrlParam } from "@/hooks/useUrlParam";
 import { useStorage } from "@/hooks/useStorage";
 import {
+	defaultPrivacySettings,
+	WPLINK_PRIVACY_STORAGE_KEY,
+} from "@/types/wpData";
+import {
 	buildWhatsAppLink,
 	upsertHistoryEntry,
 } from "@/lib/utils/wp-gen";
@@ -37,6 +41,11 @@ export function WPGen({ className }: TWPGen) {
 	const [history, setHistory] = useStorage("wplink_history", {
 		default: [] as StoredWpData[],
 	});
+	const [privacy] = useStorage(WPLINK_PRIVACY_STORAGE_KEY, {
+		default: defaultPrivacySettings,
+	});
+	const blurNameInHome = completed && (privacy.blurNameInHome || privacy.ultraPrivacyMode);
+	const blurNumberInHome = completed && (privacy.blurNumberInHome || privacy.ultraPrivacyMode);
 	const historyRef = useRef(history);
 	historyRef.current = history;
 
@@ -90,6 +99,7 @@ export function WPGen({ className }: TWPGen) {
 							className={cn(
 								"no-autofill-bg w-full rounded-md border-none bg-card py-3.5 pr-12 pl-4 text-base ring-muted outline-none focus-visible:ring-1",
 								completed && "pointer-events-none text-muted-foreground/65!",
+								blurNameInHome && "blur-xs hover:blur-none",
 							)}
 						/>
 					</div>
@@ -110,6 +120,7 @@ export function WPGen({ className }: TWPGen) {
 								"no-autofill-bg w-full rounded-md border-none bg-card py-3.5 pr-12 pl-4 text-base ring-muted outline-none focus-visible:ring-1",
 								completed &&
 									"pointer-events-none text-muted-foreground/65 focus-visible:text-muted-foreground/65",
+								blurNumberInHome && "blur-xs hover:blur-none",
 							)}
 						/>
 						<FlagIcon

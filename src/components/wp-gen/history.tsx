@@ -5,6 +5,10 @@ import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useStorage } from "@/hooks/useStorage";
 import type { StoredWpData } from "@/types/wpData";
+import {
+	defaultPrivacySettings,
+	WPLINK_PRIVACY_STORAGE_KEY,
+} from "@/types/wpData";
 import { phoneToDigits } from "@/lib/utils/wp-gen";
 import { getCountryByDialCode } from "@/lib/data/countryCodes";
 import { matchDialCodeFromPhone } from "@/lib/utils/numberUtils";
@@ -22,7 +26,12 @@ export function History({ className, children }: THistory) {
 	const [history, setHistory] = useStorage("wplink_history", {
 		default: [] as StoredWpData[],
 	});
+	const [privacy] = useStorage(WPLINK_PRIVACY_STORAGE_KEY, {
+		default: defaultPrivacySettings,
+	});
 	const [query, setQuery] = useState("");
+	const blurNumber = privacy.blurNumbersInHistory || privacy.ultraPrivacyMode;
+	const blurName = privacy.blurNamesInHistory || privacy.ultraPrivacyMode;
 
 	const searchableList = useMemo<SearchableEntry[]>(() => {
 		return history.map((entry) => {
@@ -86,6 +95,8 @@ export function History({ className, children }: THistory) {
 									key={`${item.phone}-${item.createdAt ?? 0}`}
 									{...item}
 									onDelete={() => handleDelete(item)}
+									blurNumber={blurNumber}
+									blurName={blurName}
 								/>
 							))}
 						</div>

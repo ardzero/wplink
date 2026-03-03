@@ -1,13 +1,16 @@
 import { cn, getQrCode } from "@/lib/utils";
 import {
 	Drawer,
-	DrawerClose,
 	DrawerContent,
 	DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
 import { CopyButton } from "./copy-btn";
 import { Img } from "@/components/utils/react-only/Image";
+import { useStorage } from "@/hooks/useStorage";
+import {
+	defaultPrivacySettings,
+	WPLINK_PRIVACY_STORAGE_KEY,
+} from "@/types/wpData";
 
 type TShareLink = {
 	className?: string;
@@ -18,12 +21,19 @@ type TShareLink = {
 
 const pBaseClassName =
 	"grow rounded-md border-none bg-card px-4 flex flex-col shrink justify-center h-[44px] w-full truncate sm:text-base! text-sm!";
+const blurClass = "blur-xs hover:blur-none";
+
 export function ShareLink({
 	className,
 	children,
 	sharelink,
 	wplink,
 }: TShareLink) {
+	const [privacy] = useStorage(WPLINK_PRIVACY_STORAGE_KEY, {
+		default: defaultPrivacySettings,
+	});
+	const blurLinks = privacy.blurShareLinks || privacy.ultraPrivacyMode;
+
 	return (
 		<Drawer>
 			<DrawerTrigger asChild>{children}</DrawerTrigger>
@@ -34,7 +44,11 @@ export function ShareLink({
 							<label htmlFor="wplink">WhatsApp Link</label>
 							<div className="flex w-full place-items-center gap-2">
 								<p
-									className={cn(pBaseClassName, "text-lg font-medium")}
+									className={cn(
+										pBaseClassName,
+										"text-lg font-medium",
+										blurLinks && blurClass,
+									)}
 									id="wplink"
 								>
 									{wplink}
@@ -50,7 +64,11 @@ export function ShareLink({
 							<label htmlFor="contactlink">Contact Link</label>
 							<div className="flex w-full place-items-center gap-2">
 								<p
-									className={cn(pBaseClassName, "text-lg font-medium")}
+									className={cn(
+										pBaseClassName,
+										"text-lg font-medium",
+										blurLinks && blurClass,
+									)}
 									id="contactlink"
 								>
 									{sharelink}
