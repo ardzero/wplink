@@ -1,15 +1,11 @@
 import { cn } from "@/lib/utils";
-import {
-	Drawer,
-	DrawerContent,
-	DrawerTrigger,
-} from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useStorage } from "@/hooks/useStorage";
 import type { StoredWpData } from "@/types/wpData";
 import { phoneToDigits } from "@/lib/utils/wp-gen";
 import { HistoryCard } from "./history-card";
-import { HistoryIcon } from "lucide-react";
+import { HistoryIcon, SearchIcon } from "lucide-react";
 
 type THistory = {
 	className?: string;
@@ -23,9 +19,7 @@ export function History({ className, children }: THistory) {
 
 	const handleDelete = (entry: StoredWpData) => {
 		const digits = phoneToDigits(entry.phone);
-		setHistory(
-			history.filter((e) => phoneToDigits(e.phone) !== digits),
-		);
+		setHistory(history.filter((e) => phoneToDigits(e.phone) !== digits));
 	};
 
 	return (
@@ -38,6 +32,25 @@ export function History({ className, children }: THistory) {
 							<HistoryIcon className="size-6" strokeWidth={2} />
 							<span className="-mt-1">History</span>
 						</h1>
+						<div className="group relative -mt-1 w-full max-w-[240px]">
+							<input
+								// disabled={completed}
+								// aria-disabled={completed}
+								// tabIndex={completed ? -1 : 0}
+								// ref={inputRef}
+								// value={phone}
+								// onChange={(e) => setPhone(e.target.value)}
+								id="phone"
+								name="phone"
+								type="tel"
+								inputMode="numeric"
+								placeholder="Search name or number"
+								className={cn(
+									"no-autofill-bg w-full rounded-md border-none bg-card py-2 pr-12 pl-4 text-base ring-muted outline-none focus-visible:ring-1",
+								)}
+							/>
+							<SearchIcon className="absolute top-1/2 right-4 size-4 -translate-y-1/2 opacity-35 transition-opacity duration-200 group-focus-within:opacity-100" />
+						</div>
 					</div>
 
 					<ScrollArea className="relative h-[500px] w-full">
