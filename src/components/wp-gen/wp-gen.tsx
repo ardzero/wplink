@@ -41,10 +41,18 @@ export function WPGen({ className }: TWPGen) {
 	const [privacy] = useStorage(WPLINK_PRIVACY_STORAGE_KEY, {
 		default: defaultPrivacySettings,
 	});
+	// Avoid flash of unblurred inputs on reload: until storage has hydrated, when
+	// there's no c param assume ultra-privacy (blur) so we don't reveal on first paint.
+	const [storageHydrated, setStorageHydrated] = useState(false);
+	useEffect(() => setStorageHydrated(true), []);
 	const blurNameInHome =
-		completed && (privacy.blurNameInHome || privacy.ultraPrivacyMode);
+		(!storageHydrated && !completed) ||
+		privacy.ultraPrivacyMode ||
+		(completed && privacy.blurNameInHome);
 	const blurNumberInHome =
-		completed && (privacy.blurNumberInHome || privacy.ultraPrivacyMode);
+		(!storageHydrated && !completed) ||
+		privacy.ultraPrivacyMode ||
+		(completed && privacy.blurNumberInHome);
 	const historyRef = useRef(history);
 	historyRef.current = history;
 
