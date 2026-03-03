@@ -2,7 +2,16 @@
 
 # wplink
 
-An whatsapp link and contact link generator built on top of the [bunestro](https://bunestro.ardastroid.com/) starter kit.
+wplink lets you start a WhatsApp chat in one tap, no need to clutter your address book.  
+Type any number, hit `“Message on WhatsApp”` and the conversation opens instantly (WhatsApp must be signed in).
+
+### Additional features:
+
+- Have a default message after the whatsapp chat has opened
+- One-click save to Google Contacts
+- One-click save on phone (download a .vcf file)
+- Auto saved history that never leaves your device (saved on browser locally)
+- Privacy blur options to prevent from leaking numbers while streaming
 
 ### Project Repo: [wplink](https://github.com/ardzero/wplink)
 
@@ -46,6 +55,7 @@ npm run dev
 
 - [Astro 5.2](https://astro.build/)
 - [React 19](https://react.dev/)
+- [Nanostore](https://github.com/nanostores/nanostores) (storage/state management)
 - [Tailwind CSS v4](https://tailwindcss.com/)
 - [Radix UI Primitives](https://www.radix-ui.com/primitives)
 - [Shadcn](https://ui.shadcn.com/) components
