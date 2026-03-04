@@ -4,7 +4,7 @@ import type { TSiteData, TtwitterMetaData, TMetadataIcons } from "@/types";
 // in webmanifest, theme_color is the color of the app icon's background and
 export const siteData: TSiteData = {
 	favicon: "/favicon.svg", // .svg / .ico / .png
-	name: "wplink - Whatsapp Link Generator | Create a WhatsApp Link",
+	name: "wplink - Create a WhatsApp Link | Whatsapp Link Generator",
 	shortName: "wplink",
 	publisher: "wplink.ardzero.com",
 	baseUrl: import.meta.env.SITE, // make sure to change the link in astro.config.mjs 
