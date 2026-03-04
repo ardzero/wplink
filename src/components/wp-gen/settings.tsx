@@ -24,6 +24,7 @@ import {
 	WPLINK_DEFAULT_MESSAGE_STORAGE_KEY,
 	type WplinkDefaultMessageSettings,
 } from "@/types/wpData";
+import { Prefill } from "./prefil";
 
 const HISTORY_STORAGE_KEY = "wplink_history";
 
@@ -54,7 +55,9 @@ export function Settings({ className, children }: TSettings) {
 		setPrivacy({ ...privacy, ...patch });
 	};
 
-	const updateDefaultMessage = (patch: Partial<WplinkDefaultMessageSettings>) => {
+	const updateDefaultMessage = (
+		patch: Partial<WplinkDefaultMessageSettings>,
+	) => {
 		setDefaultMessage({ ...defaultMessage, ...patch });
 	};
 
@@ -74,26 +77,20 @@ export function Settings({ className, children }: TSettings) {
 							<div>
 								<h2 className="mb-2 font-medium opacity-70">WhatsApp link</h2>
 								<div className="space-y-2">
-									<SwitchCard
+									<Prefill
+										className="h-auto"
 										id="default-message-enabled"
 										checked={defaultMessage.enabled}
 										onCheckedChange={(v) =>
 											updateDefaultMessage({ enabled: v })
 										}
+										message={defaultMessage.message}
+										onMessageChange={(v) =>
+											updateDefaultMessage({ message: v })
+										}
 									>
-										Pre-filled message (adds ?text= to wa.me links)
-									</SwitchCard>
-									{defaultMessage.enabled && (
-										<textarea
-											value={defaultMessage.message}
-											onChange={(e) =>
-												updateDefaultMessage({ message: e.target.value })
-											}
-											placeholder="e.g. Hi, I'm interested in..."
-											rows={3}
-											className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-										/>
-									)}
+										Pre-filled WhatsApp message
+									</Prefill>
 								</div>
 							</div>
 							<div>
@@ -106,19 +103,23 @@ export function Settings({ className, children }: TSettings) {
 									<Trash2 className="size-4" />
 									Clear history
 								</Button>
-								<AlertDialog open={clearConfirmOpen} onOpenChange={setClearConfirmOpen}>
+								<AlertDialog
+									open={clearConfirmOpen}
+									onOpenChange={setClearConfirmOpen}
+								>
 									<AlertDialogContent>
 										<AlertDialogHeader>
 											<AlertDialogTitle>Clear all history?</AlertDialogTitle>
 											<AlertDialogDescription>
-												This cannot be undone. All your generated link history will be permanently removed.
+												This cannot be undone. All your generated link history
+												will be permanently removed.
 											</AlertDialogDescription>
 										</AlertDialogHeader>
 										<AlertDialogFooter>
 											<AlertDialogCancel>Cancel</AlertDialogCancel>
 											<AlertDialogAction
 												onClick={handleClearHistory}
-												className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+												className="text-destructive-foreground bg-destructive hover:bg-destructive/90"
 											>
 												Clear history
 											</AlertDialogAction>
