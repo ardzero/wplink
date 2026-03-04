@@ -78,7 +78,6 @@ export function Settings({ className, children }: TSettings) {
 								<h2 className="mb-2 font-medium opacity-70">WhatsApp link</h2>
 								<div className="space-y-2">
 									<Prefill
-										className="h-auto"
 										id="default-message-enabled"
 										checked={defaultMessage.enabled}
 										onCheckedChange={(v) =>
