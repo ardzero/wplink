@@ -26,6 +26,18 @@ export const defaultPrivacySettings: WplinkPrivacySettings = {
 
 export const WPLINK_PRIVACY_STORAGE_KEY = "wplink_privacy_settings";
 
+export type WplinkDefaultMessageSettings = {
+	enabled: boolean;
+	message: string;
+};
+
+export const defaultMessageSettings: WplinkDefaultMessageSettings = {
+	enabled: false,
+	message: "",
+};
+
+export const WPLINK_DEFAULT_MESSAGE_STORAGE_KEY = "wplink_default_message";
+
 export type countryCode = {
 	code: string;
 	country: string;

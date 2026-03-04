@@ -16,11 +16,13 @@ export function preferPhoneWithDialCode(phoneA: string, phoneB: string): string 
 	return phoneA.trim().startsWith("+") ? phoneA : phoneB;
 }
 
-/** WhatsApp link: digits only, no +. https://wa.me/<digits>. Strip leading 0 (trunk prefix). */
-export function buildWhatsAppLink(phone: string): string {
+/** WhatsApp link: digits only, no +. Optional pre-filled message: ?text=urlencoded. */
+export function buildWhatsAppLink(phone: string, defaultMessage?: string): string {
 	let digits = phoneToDigits(phone);
 	if (digits.startsWith("0")) digits = digits.slice(1);
-	return `https://wa.me/${digits}`;
+	const base = `https://wa.me/${digits}`;
+	const text = (defaultMessage ?? "").trim();
+	return text ? `${base}?text=${encodeURIComponent(text)}` : base;
 }
 
 /** Google Contacts new contact URL. Phone in E.164-like form (with +). Uses givenname/familyname (Google ignores "name"). */
@@ -76,6 +78,7 @@ export function upsertHistoryEntry(
 	current: StoredWpData[],
 	entry: { phone: string; wpLink: string; name?: string },
 	cap: number = HISTORY_CAP,
+	defaultMessage?: string,
 ): StoredWpData[] {
 	const digits = phoneToDigits(entry.phone);
 	const existingIdx = current.findIndex((e) => phoneToDigits(e.phone) === digits);
@@ -91,7 +94,7 @@ export function upsertHistoryEntry(
 				: existing.name ?? undefined;
 		merged = {
 			phone,
-			wpLink: buildWhatsAppLink(phone),
+			wpLink: buildWhatsAppLink(phone, defaultMessage),
 			name,
 			createdAt: existing.createdAt ?? now,
 		};

@@ -20,6 +20,9 @@ import {
 	defaultPrivacySettings,
 	WPLINK_PRIVACY_STORAGE_KEY,
 	type WplinkPrivacySettings,
+	defaultMessageSettings,
+	WPLINK_DEFAULT_MESSAGE_STORAGE_KEY,
+	type WplinkDefaultMessageSettings,
 } from "@/types/wpData";
 
 const HISTORY_STORAGE_KEY = "wplink_history";
@@ -36,6 +39,10 @@ export function Settings({ className, children }: TSettings) {
 	const [privacy, setPrivacy] = useStorage(WPLINK_PRIVACY_STORAGE_KEY, {
 		default: defaultPrivacySettings,
 	});
+	const [defaultMessage, setDefaultMessage] = useStorage(
+		WPLINK_DEFAULT_MESSAGE_STORAGE_KEY,
+		{ default: defaultMessageSettings },
+	);
 	const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
 
 	const handleClearHistory = () => {
@@ -45,6 +52,10 @@ export function Settings({ className, children }: TSettings) {
 
 	const updatePrivacy = (patch: Partial<WplinkPrivacySettings>) => {
 		setPrivacy({ ...privacy, ...patch });
+	};
+
+	const updateDefaultMessage = (patch: Partial<WplinkDefaultMessageSettings>) => {
+		setDefaultMessage({ ...defaultMessage, ...patch });
 	};
 
 	return (
@@ -60,6 +71,31 @@ export function Settings({ className, children }: TSettings) {
 					</div>
 					<ScrollArea className="relative h-[500px] w-full">
 						<div className="mb-14 space-y-6 pr-4">
+							<div>
+								<h2 className="mb-2 font-medium opacity-70">WhatsApp link</h2>
+								<div className="space-y-2">
+									<SwitchCard
+										id="default-message-enabled"
+										checked={defaultMessage.enabled}
+										onCheckedChange={(v) =>
+											updateDefaultMessage({ enabled: v })
+										}
+									>
+										Pre-filled message (adds ?text= to wa.me links)
+									</SwitchCard>
+									{defaultMessage.enabled && (
+										<textarea
+											value={defaultMessage.message}
+											onChange={(e) =>
+												updateDefaultMessage({ message: e.target.value })
+											}
+											placeholder="e.g. Hi, I'm interested in..."
+											rows={3}
+											className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+										/>
+									)}
+								</div>
+							</div>
 							<div>
 								<h2 className="mb-2 font-medium opacity-70">Data</h2>
 								<Button

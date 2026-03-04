@@ -7,6 +7,8 @@ import { useStorage } from "@/hooks/useStorage";
 import {
 	defaultPrivacySettings,
 	WPLINK_PRIVACY_STORAGE_KEY,
+	WPLINK_DEFAULT_MESSAGE_STORAGE_KEY,
+	defaultMessageSettings,
 } from "@/types/wpData";
 import { buildWhatsAppLink, upsertHistoryEntry } from "@/lib/utils/wp-gen";
 
@@ -41,6 +43,9 @@ export function WPGen({ className }: TWPGen) {
 	const [privacy] = useStorage(WPLINK_PRIVACY_STORAGE_KEY, {
 		default: defaultPrivacySettings,
 	});
+	const [defaultMessage] = useStorage(WPLINK_DEFAULT_MESSAGE_STORAGE_KEY, {
+		default: defaultMessageSettings,
+	});
 	// Avoid flash of unblurred inputs on reload: until storage has hydrated, when
 	// there's no c param assume ultra-privacy (blur) so we don't reveal on first paint.
 	const [storageHydrated, setStorageHydrated] = useState(false);
@@ -56,24 +61,29 @@ export function WPGen({ className }: TWPGen) {
 	const historyRef = useRef(history);
 	historyRef.current = history;
 
+	const defaultText =
+		defaultMessage.enabled && defaultMessage.message.trim()
+			? defaultMessage.message.trim()
+			: undefined;
+
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (!phone) return;
-		const wpLink = buildWhatsAppLink(phone);
+		const wpLink = buildWhatsAppLink(phone, defaultText);
 		const data: wpData = { phone, wpLink, name: name || undefined };
 		setWpData(data);
 		setCompleted(true);
-		setHistory(upsertHistoryEntry(history, data));
+		setHistory(upsertHistoryEntry(history, data, undefined, defaultText));
 	};
 
 	// Hydrate from URL when c=true and p present
 	useEffect(() => {
 		if (!completed || !phone) return;
-		const wpLink = buildWhatsAppLink(phone);
+		const wpLink = buildWhatsAppLink(phone, defaultText);
 		const data: wpData = { phone, wpLink, name: name || undefined };
 		setWpData(data);
-		setHistory(upsertHistoryEntry(historyRef.current, data));
-	}, [completed, phone, name, setHistory]);
+		setHistory(upsertHistoryEntry(historyRef.current, data, undefined, defaultText));
+	}, [completed, phone, name, defaultText, setHistory]);
 
 	const handleReset = () => {
 		setPhone("");
