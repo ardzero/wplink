@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { WPNav } from "./wp-nav";
 import { FlagIcon } from "./flag";
 import { ButtonGrid } from "./button-grid";
-import { RotateCcw } from "lucide-react";
+import { Pencil, RotateCcw } from "lucide-react";
 
 type TWPGen = {
 	className?: string;
@@ -92,6 +92,12 @@ export function WPGen({ className }: TWPGen) {
 		setCompleted(false);
 	};
 
+	const handleEdit = () => {
+		setWpData(null);
+		setCompleted(false);
+		setTimeout(() => inputRef.current?.focus(), 0);
+	};
+
 	return (
 		<div
 			className={cn("container flex flex-col gap-6 align-middle", className)}
@@ -148,6 +154,7 @@ export function WPGen({ className }: TWPGen) {
 				</div>
 				<div className="relative flex w-full gap-2">
 					<Button
+						type="button"
 						size={"icon"}
 						className="h-full min-w-[40px]"
 						disabled={!completed}
@@ -159,6 +166,20 @@ export function WPGen({ className }: TWPGen) {
 					>
 						<span className="sr-only">Reset</span>
 						<RotateCcw className="size-4" />
+					</Button>
+					<Button
+						type="button"
+						size={"icon"}
+						className="h-full min-w-[40px]"
+						disabled={!completed}
+						aria-disabled={!completed}
+						aria-label="Edit phone and name"
+						variant={"secondary"}
+						onClick={handleEdit}
+						title="Edit"
+					>
+						<span className="sr-only">Edit</span>
+						<Pencil className="size-4" />
 					</Button>
 					<Button
 						className={cn(
