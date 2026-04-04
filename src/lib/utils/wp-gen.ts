@@ -70,9 +70,19 @@ export function downloadVCard(vcard: string, filenameBase: string): void {
 
 const HISTORY_CAP = 10;
 
+/** Normalize for history name matching (Unicode, spacing, case). */
+function normalizeNameForHistoryMatch(name: string): string {
+	return name
+		.normalize("NFKC")
+		.trim()
+		.replace(/\s+/g, " ")
+		.toLowerCase();
+}
+
 /**
- * Upsert one entry into history: same digits = move to top and update name; prefer phone with dial code.
- * Returns new array (newest first), capped at HISTORY_CAP.
+ * Upsert one entry into history (newest first, capped at HISTORY_CAP):
+ * 1. Same digits → move to top, merge name, prefer phone with dial code.
+ * 2. Else if submitted name is non-empty and matches another row (normalized) → same merge; phone comes from the new entry.
  */
 export function upsertHistoryEntry(
 	current: StoredWpData[],
@@ -81,7 +91,24 @@ export function upsertHistoryEntry(
 	defaultMessage?: string,
 ): StoredWpData[] {
 	const digits = phoneToDigits(entry.phone);
-	const existingIdx = current.findIndex((e) => phoneToDigits(e.phone) === digits);
+	const digitIdx = current.findIndex((e) => phoneToDigits(e.phone) === digits);
+
+	const trimmedName = (entry.name ?? "").trim();
+	const nameKey =
+		trimmedName !== "" ? normalizeNameForHistoryMatch(trimmedName) : "";
+
+	let existingIdx = digitIdx;
+	let matchedByNameOnly = false;
+	if (digitIdx < 0 && nameKey !== "") {
+		const nameIdx = current.findIndex(
+			(e) => normalizeNameForHistoryMatch(e.name ?? "") === nameKey,
+		);
+		if (nameIdx >= 0) {
+			existingIdx = nameIdx;
+			matchedByNameOnly = true;
+		}
+	}
+
 	const now = new Date().toISOString();
 
 	let merged: StoredWpData;
@@ -105,6 +132,11 @@ export function upsertHistoryEntry(
 		};
 	}
 
-	const rest = current.filter((_, i) => i !== existingIdx);
+	const rest = current.filter((e, i) => {
+		if (digitIdx >= 0) return i !== digitIdx;
+		if (matchedByNameOnly && nameKey !== "")
+			return normalizeNameForHistoryMatch(e.name ?? "") !== nameKey;
+		return true;
+	});
 	return [merged, ...rest].slice(0, cap);
 }

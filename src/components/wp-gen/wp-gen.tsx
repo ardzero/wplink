@@ -4,6 +4,7 @@ import type { StoredWpData, wpData } from "@/types/wpData";
 import { sanitizePhoneInput } from "@/lib/utils/numberUtils";
 import { parseAsBoolean, useUrlParam } from "@/hooks/useUrlParam";
 import { useStorage } from "@/hooks/useStorage";
+import { createPersistentStore } from "@/lib/storage/createPersistentStore";
 import {
 	defaultPrivacySettings,
 	WPLINK_PRIVACY_STORAGE_KEY,
@@ -22,6 +23,12 @@ type TWPGen = {
 	className?: string;
 };
 
+/** Same registry key as useStorage("wplink_history") — use .get() for latest list when upserting. */
+const wplinkHistoryStore = createPersistentStore(
+	"wplink_history",
+	[] as StoredWpData[],
+);
+
 export function WPGen({ className }: TWPGen) {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [phone, setPhone] = useUrlParam("p", {
@@ -37,7 +44,7 @@ export function WPGen({ className }: TWPGen) {
 	);
 
 	const [wpData, setWpData] = useState<wpData | null>(null);
-	const [history, setHistory] = useStorage("wplink_history", {
+	const [, setHistory] = useStorage("wplink_history", {
 		default: [] as StoredWpData[],
 	});
 	const [privacy] = useStorage(WPLINK_PRIVACY_STORAGE_KEY, {
@@ -58,9 +65,6 @@ export function WPGen({ className }: TWPGen) {
 		(!storageHydrated && !completed) ||
 		privacy.ultraPrivacyMode ||
 		(completed && privacy.blurNumberInHome);
-	const historyRef = useRef(history);
-	historyRef.current = history;
-
 	const defaultText =
 		defaultMessage.enabled && defaultMessage.message.trim()
 			? defaultMessage.message.trim()
@@ -73,7 +77,14 @@ export function WPGen({ className }: TWPGen) {
 		const data: wpData = { phone, wpLink, name: name || undefined };
 		setWpData(data);
 		setCompleted(true);
-		setHistory(upsertHistoryEntry(history, data, undefined, defaultText));
+		setHistory(
+			upsertHistoryEntry(
+				wplinkHistoryStore.get(),
+				data,
+				undefined,
+				defaultText,
+			),
+		);
 	};
 
 	// Hydrate from URL when c=true and p present
@@ -82,7 +93,14 @@ export function WPGen({ className }: TWPGen) {
 		const wpLink = buildWhatsAppLink(phone, defaultText);
 		const data: wpData = { phone, wpLink, name: name || undefined };
 		setWpData(data);
-		setHistory(upsertHistoryEntry(historyRef.current, data, undefined, defaultText));
+		setHistory(
+			upsertHistoryEntry(
+				wplinkHistoryStore.get(),
+				data,
+				undefined,
+				defaultText,
+			),
+		);
 	}, [completed, phone, name, defaultText, setHistory]);
 
 	const handleReset = () => {
