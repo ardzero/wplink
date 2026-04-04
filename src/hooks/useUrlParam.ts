@@ -1,14 +1,15 @@
-import { useCallback, useEffect, useMemo, useSyncExternalStore } from "react";
+import {
+	useCallback,
+	useEffect,
+	useLayoutEffect,
+	useMemo,
+	useState,
+} from "react";
 
 function getSearchParams() {
 	return new URLSearchParams(
 		typeof window !== "undefined" ? window.location.search : "",
 	);
-}
-
-function subscribeToUrl(cb: () => void) {
-	window.addEventListener("popstate", cb);
-	return () => window.removeEventListener("popstate", cb);
 }
 
 /** Parser for a URL search param: parse from string, serialize to string, default when missing. */
@@ -103,39 +104,34 @@ export function useUrlParam<T = string>(
 		[parserOrOptions],
 	);
 
-	const getSnapshot = useCallback(() => {
+	// URL is synced on every keystroke, but reading it only after a deferred popstate
+	// made the controlled input one tick behind React — cursor jumped to the end.
+	// Local state updates synchronously in setValue; we still sync from the URL on
+	// popstate (back/forward) and after mount (Astro / SSR default → real ?query).
+	const [value, setValueState] = useState<T>(() => parser.default);
+
+	const readFromUrl = useCallback((): T => {
 		const raw = getSearchParams().get(paramKey);
 		return raw !== null ? parser.parse(raw) : parser.default;
 	}, [paramKey, parser]);
 
-	// Always return default so SSR and client hydration match (no window on server).
-	// We sync from real URL in useEffect after mount (Astro/React islands).
-	const getServerSnapshot = useCallback(
-		() => parser.default,
-		[parser],
-	);
-
-	const value = useSyncExternalStore(
-		subscribeToUrl,
-		getSnapshot,
-		getServerSnapshot,
-	);
-
-	// After mount (e.g. Astro island hydration), re-read from real URL so ?c=true etc. apply
-	useEffect(() => {
-		window.dispatchEvent(new PopStateEvent("popstate"));
-	}, []);
+	useLayoutEffect(() => {
+		if (typeof window === "undefined") return;
+		const sync = () => setValueState(readFromUrl());
+		sync();
+		window.addEventListener("popstate", sync);
+		return () => window.removeEventListener("popstate", sync);
+	}, [readFromUrl]);
 
 	const setValue = useCallback(
 		(newVal: T) => {
+			setValueState(newVal);
+			if (typeof window === "undefined") return;
 			const serialized = parser.serialize(newVal);
 			const url = new URL(window.location.href);
 			if (serialized) url.searchParams.set(paramKey, serialized);
 			else url.searchParams.delete(paramKey);
 			window.history.replaceState(null, "", url.toString());
-			// Chrome doesn't always update location.search before the same tick ends;
-			// defer so getSnapshot() reads the new URL.
-			setTimeout(() => window.dispatchEvent(new PopStateEvent("popstate")), 0);
 		},
 		[paramKey, parser],
 	);
