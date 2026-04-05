@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { StoredWpData } from "@/types/wpData";
 import {
@@ -48,13 +49,13 @@ function ImportCsvFileList() {
 				<FileUploadItem
 					key={`${index}-${file.name}-${file.size}-${file.lastModified}`}
 					value={file}
-					className="bg-card/60 border-border/80"
+					className="border-border/80 bg-card/60"
 				>
 					<FileUploadItemPreview />
 					<FileUploadItemMetadata size="sm" />
 					<FileUploadItemDelete
 						type="button"
-						className="text-muted-foreground hover:text-foreground shrink-0 rounded-md p-1.5 hover:bg-accent"
+						className="shrink-0 rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
 						aria-label="Remove file"
 					>
 						<X className="size-4" />
@@ -99,10 +100,7 @@ export function ImportHistory({
 		const n = uploadedFiles.length;
 
 		if (n === 0) {
-			if (
-				prevUploadCountRef.current > 0 &&
-				!manualUnlinkFilesRef.current
-			) {
+			if (prevUploadCountRef.current > 0 && !manualUnlinkFilesRef.current) {
 				setCsvText("");
 				setParseError(null);
 			}
@@ -147,11 +145,17 @@ export function ImportHistory({
 			setParseError(result.error);
 			return;
 		}
+		const n = result.entries.length;
 		setHistory(mergeHistoryImport(history, result.entries, defaultMessage));
 		setCsvText("");
 		setUploadedFiles([]);
 		setParseError(null);
 		onOpenChange(false);
+		toast.success(
+			n === 1
+				? "Imported 1 entry into history"
+				: `Imported ${n} entries into history`,
+		);
 	};
 
 	return (
@@ -181,8 +185,8 @@ export function ImportHistory({
 							rows={8}
 							spellCheck={false}
 							className={cn(
-								"placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground",
-								"border-input w-full resize-y rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs outline-none",
+								"selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground",
+								"w-full resize-y rounded-md border border-input bg-transparent px-3 py-2 font-mono text-sm shadow-xs outline-none",
 								"focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
 								"disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
 							)}
@@ -190,7 +194,7 @@ export function ImportHistory({
 					</div>
 
 					<div className="flex flex-col gap-2">
-						<Label id="import-csv-file-label">Upload or drop</Label>
+						{/* <Label id="import-csv-file-label">Upload or drop</Label> */}
 						<FileUpload
 							accept=".csv,.txt,text/csv,text/plain,application/csv,application/vnd.ms-excel"
 							value={uploadedFiles}
@@ -205,7 +209,7 @@ export function ImportHistory({
 									aria-labelledby="import-csv-file-label"
 									className="min-h-[100px] rounded-md border-2 border-dashed border-border/60 bg-transparent py-3"
 								>
-									<p className="text-center text-muted-foreground text-sm">
+									<p className="text-center text-sm text-muted-foreground">
 										Drop CSVs here, click to browse (multiple), or paste a file
 										while this area is focused. Removing a file updates the
 										preview above.
@@ -222,7 +226,7 @@ export function ImportHistory({
 					</div>
 
 					{parseError ? (
-						<p className="text-destructive text-sm" role="alert">
+						<p className="text-sm text-destructive" role="alert">
 							{parseError}
 						</p>
 					) : null}

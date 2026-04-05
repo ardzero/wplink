@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
-import { ArrowDownToLine, Cog, Trash2 } from "lucide-react";
+import { ArrowDownToLine, ArrowUpToLine, Cog, Trash2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useStorage } from "@/hooks/useStorage";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,7 @@ import {
 	type WplinkDefaultMessageSettings,
 } from "@/types/wpData";
 import { Prefill } from "./prefil";
+import { HistoryExportDialog } from "./history-export-dialog";
 import { ImportHistory } from "./import";
 
 const HISTORY_STORAGE_KEY = "wplink_history";
@@ -106,6 +107,18 @@ export function Settings({ className, children }: TSettings) {
 										Clear history
 									</Button>
 
+									<HistoryExportDialog history={history}>
+										<Button
+											variant="secondary"
+											type="button"
+											className="gap-2"
+											aria-label="Export history"
+											disabled={history.length === 0}
+										>
+											<ArrowUpToLine className="size-4" />
+											Export history
+										</Button>
+									</HistoryExportDialog>
 									<Button
 										variant="secondary"
 										type="button"
