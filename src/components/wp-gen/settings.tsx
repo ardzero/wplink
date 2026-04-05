@@ -46,6 +46,7 @@ export function Settings({ className, children }: TSettings) {
 		{ default: defaultMessageSettings },
 	);
 	const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
+	const [importOpen, setImportOpen] = useState(false);
 
 	const handleClearHistory = () => {
 		setHistory([]);
@@ -109,10 +110,21 @@ export function Settings({ className, children }: TSettings) {
 										variant="secondary"
 										type="button"
 										aria-label="Import history"
+										onClick={() => setImportOpen(true)}
 									>
 										<ArrowDownToLine className="size-4" /> Import history
 									</Button>
-									{/* <ImportHistory open={importOpen} onOpenChange={setImportOpen} /> */}
+									<ImportHistory
+										open={importOpen}
+										onOpenChange={setImportOpen}
+										history={history}
+										setHistory={setHistory}
+										defaultMessage={
+											defaultMessage.enabled
+												? defaultMessage.message
+												: undefined
+										}
+									/>
 								</div>
 
 								<AlertDialog

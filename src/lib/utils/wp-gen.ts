@@ -1,6 +1,8 @@
 import type { StoredWpData } from "@/types/wpData";
 import { matchDialCodeFromPhone } from "./numberUtils";
 
+const HISTORY_CAP = 10;
+
 /** Digits only (for equality / deduplication). Strips +, spaces, dashes, leading 00. */
 export function phoneToDigits(phone: string): string {
 	const digits = phone.replace(/\D/g, "");
@@ -100,7 +102,122 @@ export function downloadTextFile(
 	URL.revokeObjectURL(url);
 }
 
-const HISTORY_CAP = 10;
+function parseCsvRows(text: string): string[][] {
+	const s = text.replace(/^\uFEFF/, "");
+	const rows: string[][] = [];
+	let row: string[] = [];
+	let field = "";
+	let i = 0;
+	let inQuotes = false;
+	while (i < s.length) {
+		const c = s[i]!;
+		if (inQuotes) {
+			if (c === '"') {
+				if (s[i + 1] === '"') {
+					field += '"';
+					i += 2;
+					continue;
+				}
+				inQuotes = false;
+				i++;
+				continue;
+			}
+			field += c;
+			i++;
+			continue;
+		}
+		if (c === '"') {
+			inQuotes = true;
+			i++;
+			continue;
+		}
+		if (c === ",") {
+			row.push(field);
+			field = "";
+			i++;
+			continue;
+		}
+		if (c === "\r") {
+			i++;
+			continue;
+		}
+		if (c === "\n") {
+			row.push(field);
+			rows.push(row);
+			row = [];
+			field = "";
+			i++;
+			continue;
+		}
+		field += c;
+		i++;
+	}
+	row.push(field);
+	if (row.length > 1 || (row[0]?.trim() ?? "") !== "") {
+		rows.push(row);
+	}
+	return rows;
+}
+
+export type ParseHistoryCsvResult =
+	| { ok: true; entries: StoredWpData[] }
+	| { ok: false; error: string };
+
+/** Parses CSV from export (`name`, `phone`, `wpLink`, `createdAt` header). */
+export function parseHistoryCsv(text: string): ParseHistoryCsvResult {
+	const trimmed = text.trim();
+	if (!trimmed) {
+		return { ok: false, error: "CSV is empty." };
+	}
+
+	const rows = parseCsvRows(trimmed);
+	if (rows.length < 2) {
+		return {
+			ok: false,
+			error: "Add a header row and at least one data row.",
+		};
+	}
+
+	const header = rows[0]!.map((h) => h.trim().toLowerCase());
+	const col = {
+		name: header.indexOf("name"),
+		phone: header.indexOf("phone"),
+		wpLink: header.indexOf("wplink"),
+		createdAt: header.indexOf("createdat"),
+	};
+
+	if (col.phone < 0) {
+		return { ok: false, error: 'Missing a "phone" column in the header row.' };
+	}
+
+	const entries: StoredWpData[] = [];
+	for (let r = 1; r < rows.length; r++) {
+		const cells = rows[r]!;
+		const phone = (cells[col.phone] ?? "").trim();
+		if (!phone) continue;
+		if (phoneToDigits(phone).length === 0) continue;
+
+		const nameVal = col.name >= 0 ? (cells[col.name] ?? "").trim() : "";
+		const createdAtRaw =
+			col.createdAt >= 0 ? (cells[col.createdAt] ?? "").trim() : "";
+
+		entries.push({
+			phone,
+			wpLink: buildWhatsAppLink(phone),
+			name: nameVal || undefined,
+			createdAt: createdAtRaw || undefined,
+		});
+	}
+
+	if (entries.length === 0) {
+		return {
+			ok: false,
+			error: "No valid rows: each row needs a phone number.",
+		};
+	}
+
+	return { ok: true, entries };
+}
 
 /** Normalize for history name matching (Unicode, spacing, case). */
 function normalizeNameForHistoryMatch(name: string): string {
@@ -118,7 +235,7 @@ function normalizeNameForHistoryMatch(name: string): string {
  */
 export function upsertHistoryEntry(
 	current: StoredWpData[],
-	entry: { phone: string; wpLink: string; name?: string },
+	entry: { phone: string; wpLink: string; name?: string; createdAt?: string },
 	cap: number = HISTORY_CAP,
 	defaultMessage?: string,
 ): StoredWpData[] {
@@ -158,9 +275,18 @@ export function upsertHistoryEntry(
 			createdAt: existing.createdAt ?? now,
 		};
 	} else {
+		const created =
+			entry.createdAt !== undefined && String(entry.createdAt).trim() !== ""
+				? String(entry.createdAt).trim()
+				: now;
 		merged = {
-			...entry,
-			createdAt: now,
+			phone: entry.phone.trim(),
+			name:
+				entry.name !== undefined && entry.name.trim() !== ""
+					? entry.name.trim()
+					: undefined,
+			wpLink: buildWhatsAppLink(entry.phone, defaultMessage),
+			createdAt: created,
 		};
 	}
 
@@ -171,4 +297,28 @@ export function upsertHistoryEntry(
 		return true;
 	});
 	return [merged, ...rest].slice(0, cap);
+}
+
+/** Apply exported rows onto current history (same order as CSV: newest row first). */
+export function mergeHistoryImport(
+	current: StoredWpData[],
+	imported: StoredWpData[],
+	defaultMessage?: string,
+	cap: number = HISTORY_CAP,
+): StoredWpData[] {
+	let next = [...current];
+	for (const row of imported) {
+		next = upsertHistoryEntry(
+			next,
+			{
+				phone: row.phone,
+				wpLink: row.wpLink,
+				name: row.name,
+				createdAt: row.createdAt,
+			},
+			cap,
+			defaultMessage,
+		);
+	}
+	return next;
 }
