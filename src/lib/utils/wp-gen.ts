@@ -68,6 +68,38 @@ export function downloadVCard(vcard: string, filenameBase: string): void {
 	URL.revokeObjectURL(url);
 }
 
+function escapeCsvCell(value: string): string {
+	if (/[",\n\r]/.test(value)) {
+		return `"${value.replace(/"/g, '""')}"`;
+	}
+	return value;
+}
+
+/** RFC 4180–style CSV for history export (header + one row per entry). */
+export function buildHistoryCsv(entries: StoredWpData[]): string {
+	const header = ["name", "phone", "wpLink", "createdAt"].map(escapeCsvCell);
+	const lines = entries.map((e) =>
+		[e.name ?? "", e.phone, e.wpLink, e.createdAt ?? ""]
+			.map((cell) => escapeCsvCell(String(cell)))
+			.join(","),
+	);
+	return [header.join(","), ...lines].join("\r\n");
+}
+
+export function downloadTextFile(
+	contents: string,
+	filename: string,
+	mime = "text/plain;charset=utf-8",
+): void {
+	const blob = new Blob([contents], { type: mime });
+	const url = URL.createObjectURL(blob);
+	const a = document.createElement("a");
+	a.href = url;
+	a.download = filename;
+	a.click();
+	URL.revokeObjectURL(url);
+}
+
 const HISTORY_CAP = 10;
 
 /** Normalize for history name matching (Unicode, spacing, case). */

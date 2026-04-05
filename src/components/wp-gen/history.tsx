@@ -9,11 +9,25 @@ import {
 	defaultPrivacySettings,
 	WPLINK_PRIVACY_STORAGE_KEY,
 } from "@/types/wpData";
-import { phoneToDigits } from "@/lib/utils/wp-gen";
+import {
+	buildHistoryCsv,
+	downloadTextFile,
+	phoneToDigits,
+} from "@/lib/utils/wp-gen";
 import { getCountryByDialCode } from "@/lib/data/countryCodes";
 import { matchDialCodeFromPhone } from "@/lib/utils/numberUtils";
 import { HistoryCard } from "./history-card";
-import { HistoryIcon, SearchIcon } from "lucide-react";
+import { ArrowUpFromLine, HistoryIcon, SearchIcon } from "lucide-react";
+import { Button } from "../ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "../ui/dialog";
 
 type SearchableEntry = StoredWpData & { countryName: string };
 
@@ -30,6 +44,10 @@ export function History({ className, children }: THistory) {
 		default: defaultPrivacySettings,
 	});
 	const [query, setQuery] = useState("");
+	const [exportOpen, setExportOpen] = useState(false);
+	const [copyFeedback, setCopyFeedback] = useState<"idle" | "ok" | "err">(
+		"idle",
+	);
 	const blurNumber = privacy.blurNumbersInHistory || privacy.ultraPrivacyMode;
 	const blurName = privacy.blurNamesInHistory || privacy.ultraPrivacyMode;
 
@@ -61,6 +79,25 @@ export function History({ className, children }: THistory) {
 		setHistory(history.filter((e) => phoneToDigits(e.phone) !== digits));
 	};
 
+	const csvExport = useMemo(() => buildHistoryCsv(history), [history]);
+
+	const handleExportDownload = () => {
+		const day = new Date().toISOString().slice(0, 10);
+		downloadTextFile(csvExport, `wplink-history-${day}.csv`, "text/csv;charset=utf-8");
+		setExportOpen(false);
+	};
+
+	const handleExportCopy = async () => {
+		try {
+			await navigator.clipboard.writeText(csvExport);
+			setCopyFeedback("ok");
+			window.setTimeout(() => setCopyFeedback("idle"), 2000);
+		} catch {
+			setCopyFeedback("err");
+			window.setTimeout(() => setCopyFeedback("idle"), 2500);
+		}
+	};
+
 	return (
 		<Drawer>
 			<DrawerTrigger asChild>{children}</DrawerTrigger>
@@ -71,20 +108,72 @@ export function History({ className, children }: THistory) {
 							<HistoryIcon className="size-6" strokeWidth={2} />
 							<span className="-mt-1">History</span>
 						</h1>
-						<div className="group relative -mt-1 w-full max-w-[240px]">
-							<input
-								id="history-search"
-								name="history-search"
-								type="search"
-								value={query}
-								onChange={(e) => setQuery(e.target.value)}
-								placeholder="Search name, number, country"
-								className={cn(
-									"no-autofill-bg w-full rounded-md border-none bg-card py-2 pr-6 pl-4 text-sm ring-muted outline-none focus-visible:ring-1",
-									"[&::-webkit-search-cancel-button]:hidden",
-								)}
-							/>
-							<SearchIcon className="absolute top-1/2 right-3 size-4 -translate-y-1/2 opacity-35 transition-opacity duration-200 group-focus-within:opacity-100" />
+						<div className="flex items-center gap-2">
+							<div className="group relative -mt-1 w-full max-w-[240px]">
+								<input
+									id="history-search"
+									name="history-search"
+									type="search"
+									value={query}
+									onChange={(e) => setQuery(e.target.value)}
+									placeholder="Name, number, country"
+									className={cn(
+										"no-autofill-bg w-full rounded-md border-none bg-card py-2 pr-8 pl-4 text-sm ring-muted outline-none focus-visible:ring-1",
+										"[&::-webkit-search-cancel-button]:hidden",
+									)}
+								/>
+								<SearchIcon className="absolute top-1/2 right-2.5 size-4 -translate-y-1/2 opacity-35 transition-opacity duration-200 group-focus-within:opacity-100" />
+							</div>
+							<Dialog
+								open={exportOpen}
+								onOpenChange={(open) => {
+									setExportOpen(open);
+									if (!open) setCopyFeedback("idle");
+								}}
+							>
+								<DialogTrigger asChild>
+									<Button
+										variant="ghost"
+										size="icon"
+										type="button"
+										aria-label="Export history"
+										disabled={history.length === 0}
+									>
+										<ArrowUpFromLine className="size-4" />
+									</Button>
+								</DialogTrigger>
+								<DialogContent>
+									<DialogHeader>
+										<DialogTitle>Export history</DialogTitle>
+										<DialogDescription>
+											Download a CSV file or copy the same data to your
+											clipboard ({history.length}{" "}
+											{history.length === 1 ? "entry" : "entries"}).
+										</DialogDescription>
+									</DialogHeader>
+									<DialogFooter className="gap-2 sm:gap-2">
+										<Button
+											type="button"
+											variant="outline"
+											onClick={() => void handleExportCopy()}
+											disabled={history.length === 0}
+										>
+											{copyFeedback === "ok"
+												? "Copied"
+												: copyFeedback === "err"
+													? "Copy failed"
+													: "Copy CSV"}
+										</Button>
+										<Button
+											type="button"
+											onClick={handleExportDownload}
+											disabled={history.length === 0}
+										>
+											Download CSV
+										</Button>
+									</DialogFooter>
+								</DialogContent>
+							</Dialog>
 						</div>
 					</div>
 

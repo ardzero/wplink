@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
-import { Cog, Trash2 } from "lucide-react";
+import { ArrowDownToLine, Cog, Trash2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useStorage } from "@/hooks/useStorage";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,7 @@ import {
 	type WplinkDefaultMessageSettings,
 } from "@/types/wpData";
 import { Prefill } from "./prefil";
+import { ImportHistory } from "./import";
 
 const HISTORY_STORAGE_KEY = "wplink_history";
 
@@ -94,14 +95,26 @@ export function Settings({ className, children }: TSettings) {
 							</div>
 							<div>
 								<h2 className="mb-2 font-medium opacity-70">Data</h2>
-								<Button
-									variant="destructive"
-									onClick={() => setClearConfirmOpen(true)}
-									className="gap-2"
-								>
-									<Trash2 className="size-4" />
-									Clear history
-								</Button>
+								<div className="flex items-center gap-2">
+									<Button
+										variant="destructive"
+										onClick={() => setClearConfirmOpen(true)}
+										className="gap-2"
+									>
+										<Trash2 className="size-4" />
+										Clear history
+									</Button>
+
+									<Button
+										variant="secondary"
+										type="button"
+										aria-label="Import history"
+									>
+										<ArrowDownToLine className="size-4" /> Import history
+									</Button>
+									{/* <ImportHistory open={importOpen} onOpenChange={setImportOpen} /> */}
+								</div>
+
 								<AlertDialog
 									open={clearConfirmOpen}
 									onOpenChange={setClearConfirmOpen}
